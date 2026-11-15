@@ -48,6 +48,7 @@ class Settings extends Page
         'email', 'notify_email', 'phone', 'address', 'linkedin',
         'hero_kicker', 'hero_title', 'hero_text', 'stats',
         'footer_text', 'imprint', 'privacy',
+        'app_name', 'app_url', 'app_text', 'app_image',
     ];
 
     public function mount(): void
@@ -81,15 +82,16 @@ class Settings extends Page
                                     ->columns(3)
                                     ->schema([
                                         FileUpload::make('logo')
-                                            ->label('Logo (für dunklen Hintergrund)')
+                                            ->label('Logo')
+                                            ->helperText('Für helle Hintergründe – Website und Admin.')
                                             ->disk('public')
                                             ->directory('branding')
                                             ->visibility('public')
                                             ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/webp', 'image/jpeg'])
                                             ->maxSize(2048),
                                         FileUpload::make('logo_dark')
-                                            ->label('Logo (für hellen Hintergrund)')
-                                            ->helperText('Optional – z. B. für den Admin im hellen Modus.')
+                                            ->label('Logo für dunkle Hintergründe')
+                                            ->helperText('Optional – z. B. für den Admin im Dunkelmodus.')
                                             ->disk('public')
                                             ->directory('branding')
                                             ->visibility('public')
@@ -142,6 +144,26 @@ class Settings extends Page
                                             ->addActionLabel('Kennzahl hinzufügen'),
                                     ]),
                                 Textarea::make('footer_text')->label('Text im Seitenfuß')->rows(2),
+                            ]),
+                        Tab::make('App')
+                            ->icon(Heroicon::OutlinedDevicePhoneMobile)
+                            ->schema([
+                                Section::make('PSD Profil Rechner')
+                                    ->description('Die App wird auf Startseite, Rechnerseite, im Menü und auf /app beworben. Ohne Store-Link wird sie überall ausgeblendet.')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('app_name')->label('App-Name'),
+                                        TextInput::make('app_url')->label('Link zum Google Play Store')->url(),
+                                        Textarea::make('app_text')->label('Kurzbeschreibung')->rows(3)->columnSpanFull(),
+                                        FileUpload::make('app_image')
+                                            ->label('Screenshot der App')
+                                            ->helperText('Hochformat, z. B. 1080×2340 px. Ohne Bild zeigt die Website eine gezeichnete Illustration.')
+                                            ->disk('public')
+                                            ->directory('branding')
+                                            ->visibility('public')
+                                            ->acceptedFileTypes(['image/png', 'image/webp', 'image/jpeg'])
+                                            ->maxSize(4096),
+                                    ]),
                             ]),
                         Tab::make('Rechtliches')
                             ->icon(Heroicon::OutlinedScale)

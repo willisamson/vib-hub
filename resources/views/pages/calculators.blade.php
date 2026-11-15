@@ -82,6 +82,17 @@
                     </div>
                 </section>
 
+                @if ($site->appUrl())
+                    <aside class="app-callout">
+                        <x-glyph name="phone-app" />
+                        <div>
+                            <strong>Auch als App: {{ $site->get('app_name') }}</strong>
+                            <span>Kräfte und Hubwege aus dem PSD-Profil – offline im Prüffeld, mit PDF-Export.</span>
+                        </div>
+                        <a class="btn btn--small btn--primary" href="{{ $site->appUrl() }}" target="_blank" rel="noopener">Bei Google Play</a>
+                    </aside>
+                @endif
+
                 {{-- ============================================== Random --}}
                 <section class="panel calc" id="random" data-calc="random" aria-labelledby="t-random">
                     <div class="panel__head">

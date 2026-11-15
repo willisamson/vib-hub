@@ -9,7 +9,7 @@
                 @endforeach
             </ol>
         @endif
-        <h1 class="h-1" style="max-width: 18ch">{{ $title }}</h1>
+        <h1 class="hd-1" style="max-width: 18ch">{{ $title }}</h1>
         @if (! empty($lede))
             <p class="lede">{{ $lede }}</p>
         @endif

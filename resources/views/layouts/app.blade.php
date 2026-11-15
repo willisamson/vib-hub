@@ -18,7 +18,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('images/og-image.png') }}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="theme-color" content="#071019">
+    <meta name="theme-color" content="#f2f5f7">
     <link rel="icon" href="{{ $site->faviconUrl() }}">
     <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
     @fonts

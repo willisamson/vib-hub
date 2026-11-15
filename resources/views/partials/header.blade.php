@@ -2,6 +2,7 @@
     $nav = [
         ['label' => 'Leistungen', 'route' => 'services.index', 'active' => 'services.*'],
         ['label' => 'Berechnungen', 'route' => 'calculators', 'active' => 'calculators'],
+        ...($site->appUrl() ? [['label' => 'App', 'route' => 'app', 'active' => 'app', 'class' => 'nav-app']] : []),
         ['label' => 'Normen', 'route' => 'norms.index', 'active' => 'norms.*'],
         ['label' => 'Schulungen', 'route' => 'trainings.index', 'active' => 'trainings.*'],
     ];
@@ -17,7 +18,7 @@
         </button>
         <nav class="site-nav" id="site-nav" aria-label="Hauptnavigation" data-nav>
             @foreach ($nav as $item)
-                <a href="{{ route($item['route']) }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}</a>
+                <a href="{{ route($item['route']) }}" class="{{ $item['class'] ?? '' }}" @if (request()->routeIs($item['active'])) aria-current="page" @endif>{{ $item['label'] }}</a>
             @endforeach
             <a href="{{ route('contact') }}" class="btn btn--primary btn--small">Anfrage stellen</a>
         </nav>

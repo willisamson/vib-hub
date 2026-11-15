@@ -19,12 +19,12 @@
 
                 @if ($service->demo === 'resonance')
                     <div class="stack-m">
-                        <h2 class="h-3">Probieren Sie es aus</h2>
+                        <h2 class="hd-3">Probieren Sie es aus</h2>
                         @include('partials.demo-resonance')
                     </div>
                 @elseif ($service->demo === 'isolation')
                     <div class="stack-m">
-                        <h2 class="h-3">So wirkt eine elastische Lagerung</h2>
+                        <h2 class="hd-3">So wirkt eine elastische Lagerung</h2>
                         @include('partials.demo-isolation')
                     </div>
                 @elseif (in_array($service->demo, ['sine', 'random', 'shock'], true))
@@ -39,7 +39,7 @@
             <aside>
                 @if (! empty($service->features))
                     <div class="panel">
-                        <div class="panel__head"><h2 class="h-3" style="font-size:1.35rem">Auf einen Blick</h2></div>
+                        <div class="panel__head"><h2 class="hd-3" style="font-size:1.35rem">Auf einen Blick</h2></div>
                         <div class="panel__body">
                             <ul class="checklist">
                                 @foreach ($service->features as $feature)
@@ -51,14 +51,14 @@
                 @endif
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="h-3" style="font-size:1.35rem">Projekt besprechen</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">Projekt besprechen</h2>
                         <p class="muted">Beschreiben Sie kurz Prüfling, Anforderung und Termin – wir melden uns mit einem Vorschlag.</p>
                         <a class="btn btn--primary" style="width:100%" href="{{ route('contact', ['thema' => $service->category === 'pruefung' ? 'pruefung' : ($service->demo === 'resonance' ? 'resonanz' : ($service->category === 'engineering' ? 'berechnung' : 'service')), 'bezug' => $service->title]) }}">Anfrage zu dieser Leistung</a>
                     </div>
                 </div>
                 @if ($related->isNotEmpty())
                     <div class="panel">
-                        <div class="panel__head"><h2 class="h-3" style="font-size:1.35rem">Passt dazu</h2></div>
+                        <div class="panel__head"><h2 class="hd-3" style="font-size:1.35rem">Passt dazu</h2></div>
                         <div class="panel__body" style="padding-block:.6rem">
                             <ul class="svc-list">
                                 @foreach ($related as $item)

@@ -32,7 +32,7 @@
         <div class="container hero__inner">
             <div class="hero__copy">
                 <p class="hero__kicker">{{ $site->get('hero_kicker') }}</p>
-                <h1 class="h-display" id="hero-title">{{ $site->get('hero_title') }}</h1>
+                <h1 class="hd-display" id="hero-title">{{ $site->get('hero_title') }}</h1>
                 <p class="lede">{{ $site->get('hero_text') }}</p>
                 <div class="hero__actions">
                     <a class="btn btn--primary" href="{{ route('contact', ['thema' => 'pruefung']) }}">Prüfung anfragen</a>
@@ -63,7 +63,7 @@
     <section class="section" aria-labelledby="tests-title">
         <div class="container">
             <div class="section-head">
-                <h2 class="h-2" id="tests-title">Drei Signale. Eine Frage: Hält Ihr Produkt?</h2>
+                <h2 class="hd-2" id="tests-title">Drei Signale. Eine Frage: Hält Ihr Produkt?</h2>
                 <p class="lede">Jede Umgebung hat ihre eigene Signatur. Wir wählen das passende Prüfverfahren, leiten die Schärfe aus Norm oder Feldmessung ab und dokumentieren jeden Lauf nachvollziehbar.</p>
             </div>
             <div class="tests">
@@ -88,11 +88,13 @@
         </div>
     </section>
 
+    @include('partials.app-promo')
+
     {{-- Resonanzbeseitigung --}}
     <section class="section section--panel" id="resonanz" aria-labelledby="reso-title">
         <div class="container reso">
             <div>
-                <h2 class="h-2" id="reso-title">Resonanzen beseitigen, nicht Symptome behandeln</h2>
+                <h2 class="hd-2" id="reso-title">Resonanzen beseitigen, nicht Symptome behandeln</h2>
                 <p class="lede" style="margin-top:1.2rem">Trifft eine Drehzahl auf eine Eigenfrequenz, schaukelt sich die Struktur auf – hier um das 25-fache. Wählen Sie rechts eine Maßnahme und verschieben Sie die Betriebsfrequenz.</p>
                 <ol class="steps">
                     <li><strong>Messen</strong><span>Betriebsschwingungen, Hochlauf, Übertragungsfunktionen</span></li>
@@ -113,7 +115,7 @@
     <section class="section" aria-labelledby="svc-title">
         <div class="container">
             <div class="section-head">
-                <h2 class="h-2" id="svc-title">Vom Prüfstand bis zur Simulation</h2>
+                <h2 class="hd-2" id="svc-title">Vom Prüfstand bis zur Simulation</h2>
                 <p class="lede">Prüfung, Messung und Berechnung greifen bei uns ineinander. Das spart Schleifen: Was im Versuch auffällt, klären wir im Modell – und umgekehrt.</p>
             </div>
             <div class="svc-groups">
@@ -142,7 +144,7 @@
     <section class="section section--panel section--bolts" aria-labelledby="calc-title">
         <div class="container calc-teaser">
             <div>
-                <h2 class="h-2" id="calc-title">Rechnen, bevor es schwingt</h2>
+                <h2 class="hd-2" id="calc-title">Rechnen, bevor es schwingt</h2>
                 <p class="lede" style="margin-top:1.2rem">Unsere Rechner nutzen wir selbst im Prüffeld. Sie stehen Ihnen frei zur Verfügung – ohne Anmeldung.</p>
                 <ul class="tool-list" style="margin-top:2rem">
                     <li><a href="{{ route('calculators') }}#sinus"><div><strong>Sinus-Umrechner</strong><span>Weg, Geschwindigkeit, Beschleunigung und Übergangsfrequenz</span></div><span class="mono">a = (2πf)²·x</span></a></li>
@@ -192,7 +194,7 @@
     <section class="section" aria-labelledby="training-title">
         <div class="container">
             <div class="section-head">
-                <h2 class="h-2" id="training-title">Nächste Schulungstermine</h2>
+                <h2 class="hd-2" id="training-title">Nächste Schulungstermine</h2>
                 <p class="lede">Grundlagen, Prüfnormen, Signalanalyse und Resonanzbeseitigung – mit Live-Versuchen am Schwingerreger. Alle Seminare gibt es auch als Inhouse-Schulung.</p>
             </div>
             @if ($upcoming->isEmpty())
@@ -212,7 +214,7 @@
     <section class="section section--panel" aria-labelledby="norm-title">
         <div class="container">
             <div class="section-head">
-                <h2 class="h-2" id="norm-title">Normen, nach denen wir prüfen</h2>
+                <h2 class="hd-2" id="norm-title">Normen, nach denen wir prüfen</h2>
                 <p class="lede">Von der Grundnorm DIN EN 60068 über Fahrzeug-, Bahn- und Luftfahrtnormen bis zur Bewertung von Maschinen und Bauwerken. Die Farbe zeigt die Signalart.</p>
             </div>
             <div class="norm-index">

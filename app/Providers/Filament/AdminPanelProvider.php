@@ -32,8 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('vib-hub Admin')
-            ->brandLogo(fn (): string => app(Site::class)->logoDarkUrl())
-            ->darkModeBrandLogo(fn (): string => app(Site::class)->logoUrl())
+            ->brandLogo(fn (): string => app(Site::class)->logoUrl())
+            ->darkModeBrandLogo(fn (): string => app(Site::class)->logoOnDarkUrl())
             ->brandLogoHeight('2.1rem')
             ->favicon(fn (): string => app(Site::class)->faviconUrl())
             ->colors([

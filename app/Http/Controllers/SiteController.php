@@ -6,6 +6,7 @@ use App\Models\Norm;
 use App\Models\Service;
 use App\Models\Training;
 use App\Support\Catalog;
+use App\Support\Site;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 
@@ -99,6 +100,13 @@ class SiteController extends Controller
         return view('pages.calculators');
     }
 
+    public function app(Site $site): View
+    {
+        abort_unless($site->appUrl(), 404);
+
+        return view('pages.app');
+    }
+
     public function imprint(): View
     {
         return view('pages.legal', ['type' => 'imprint']);
@@ -113,7 +121,7 @@ class SiteController extends Controller
     {
         $urls = collect([
             route('home'), route('services.index'), route('trainings.index'),
-            route('norms.index'), route('calculators'), route('contact'),
+            route('norms.index'), route('calculators'), route('app'), route('contact'),
         ])
             ->merge(Service::query()->published()->pluck('slug')->map(fn ($s) => route('services.show', $s)))
             ->merge(Training::query()->published()->pluck('slug')->map(fn ($s) => route('trainings.show', $s)))

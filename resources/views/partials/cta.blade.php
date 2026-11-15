@@ -1,7 +1,7 @@
 <section class="section section--bolts" aria-labelledby="cta-title">
     <div class="container cta">
         <div>
-            <h2 class="h-1" id="cta-title">Was bringt Ihr Produkt zum Schwingen?</h2>
+            <h2 class="hd-1" id="cta-title">Was bringt Ihr Produkt zum Schwingen?</h2>
             <p class="lede">Schicken Sie uns Ihre Spezifikation, eine Messung oder einfach eine Beschreibung des Problems. Sie bekommen eine fachliche Rückmeldung – kein Formschreiben.</p>
             <div class="cta__actions">
                 <a class="btn btn--primary" href="{{ route('contact') }}">Anfrage stellen</a>

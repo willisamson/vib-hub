@@ -12,6 +12,9 @@
                     <li><a href="{{ route('calculators') }}">Berechnungen</a></li>
                     <li><a href="{{ route('norms.index') }}">Normen</a></li>
                     <li><a href="{{ route('trainings.index') }}">Schulungen</a></li>
+                    @if ($site->appUrl())
+                        <li><a href="{{ route('app') }}">App: {{ $site->get('app_name') }}</a></li>
+                    @endif
                 </ul>
             </div>
             <div>

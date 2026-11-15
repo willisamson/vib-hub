@@ -37,6 +37,10 @@ class Site
         'footer_text' => 'Ingenieurdienstleistungen für Schwingungsprüfung, Resonanzanalyse und dynamische Auslegung.',
         'imprint' => null,
         'privacy' => null,
+        'app_name' => 'PSD Profil Rechner',
+        'app_url' => 'https://play.google.com/store/apps/details?id=de.example.psdprofilecalculator&hl=de',
+        'app_text' => 'Kräfte und Hubwege für Schwingprüfungen direkt aus dem PSD-Profil berechnen – auf dem Smartphone, offline, ohne Werbung und ohne Datensammlung.',
+        'app_image' => null,
         'logo' => null,
         'logo_dark' => null,
         'favicon' => null,
@@ -81,16 +85,28 @@ class Site
         return (string) $this->get('company_name', 'vib-hub');
     }
 
-    /** Logo für dunklen Hintergrund (Frontend). */
+    /** Hauptlogo für helle Hintergründe (Website, Admin hell). */
     public function logoUrl(): string
     {
-        return $this->fileUrl('logo') ?? asset('images/vib-hub-logo.svg');
+        return $this->fileUrl('logo') ?? asset('images/vib-hub-logo-dark.svg');
     }
 
-    /** Logo für hellen Hintergrund (z. B. Admin im hellen Modus). */
-    public function logoDarkUrl(): string
+    /** Logo-Variante für dunkle Hintergründe (Admin im Dunkelmodus). */
+    public function logoOnDarkUrl(): string
     {
-        return $this->fileUrl('logo_dark') ?? $this->fileUrl('logo') ?? asset('images/vib-hub-logo-dark.svg');
+        return $this->fileUrl('logo_dark') ?? $this->fileUrl('logo') ?? asset('images/vib-hub-logo.svg');
+    }
+
+    public function appUrl(): ?string
+    {
+        $url = $this->get('app_url');
+
+        return is_string($url) && $url !== '' ? $url : null;
+    }
+
+    public function appImageUrl(): ?string
+    {
+        return $this->fileUrl('app_image');
     }
 
     public function hasCustomLogo(): bool

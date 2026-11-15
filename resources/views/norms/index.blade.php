@@ -13,9 +13,9 @@
     <div class="section" style="padding-top: 2.5rem">
         <div class="container stack-m">
             <div class="filters" data-norm-filter>
-                <button type="button" class="filter" data-filter="all" aria-pressed="true">Alle</button>
+                <button type="button" class="chip" data-filter="all" aria-pressed="true">Alle</button>
                 @foreach ($categories as $key => $label)
-                    <button type="button" class="filter" data-filter="{{ $key }}" aria-pressed="false">{{ $label }}</button>
+                    <button type="button" class="chip" data-filter="{{ $key }}" aria-pressed="false">{{ $label }}</button>
                 @endforeach
                 <label class="search">
                     <span class="sr-only">Normen durchsuchen</span>

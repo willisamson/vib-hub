@@ -17,7 +17,7 @@
             <article class="stack-l">
                 @if (! empty($training->topics))
                     <section class="stack-m">
-                        <h2 class="h-3">Inhalte</h2>
+                        <h2 class="hd-3">Inhalte</h2>
                         <ul class="checklist">
                             @foreach ($training->topics as $topic)
                                 <li><x-glyph name="check" /><span>{{ $topic }}</span></li>
@@ -30,7 +30,7 @@
                 @endif
 
                 <section class="stack-m">
-                    <h2 class="h-3">Termine</h2>
+                    <h2 class="hd-3">Termine</h2>
                     @if ($dates->isEmpty())
                         <div class="empty">Aktuell kein offener Termin. Wir planen gern einen Termin für Ihr Team.</div>
                     @else

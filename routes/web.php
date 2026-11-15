@@ -16,6 +16,7 @@ Route::get('/normen', [SiteController::class, 'norms'])->name('norms.index');
 Route::get('/normen/{norm:slug}', [SiteController::class, 'norm'])->name('norms.show');
 
 Route::get('/berechnungen', [SiteController::class, 'calculators'])->name('calculators');
+Route::get('/app', [SiteController::class, 'app'])->name('app');
 
 Route::get('/kontakt', [ContactController::class, 'show'])->name('contact');
 Route::post('/kontakt', [ContactController::class, 'store'])->middleware('throttle:6,1')->name('contact.store');

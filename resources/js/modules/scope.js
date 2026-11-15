@@ -166,7 +166,7 @@ export class Scope {
         if (!w || !h) return;
         const bg = cssVar('--scope-bg', '#06121c');
         const color = cssVar(MODES[this.mode].color, '#3ee6ff');
-        const gridColor = cssVar('--scope-grid', 'rgba(140,190,210,.13)');
+        const gridColor = cssVar('--scope-grid', 'rgba(11,26,38,.075)');
 
         // Nachleuchten: vorheriges Bild nur abdunkeln statt löschen
         ctx.globalCompositeOperation = 'source-over';
@@ -198,10 +198,10 @@ export class Scope {
 
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = color;
-        ctx.globalAlpha = 0.14;
-        ctx.lineWidth = this.opts.grid ? 9 : 6;
+        ctx.globalAlpha = 0.12;
+        ctx.lineWidth = this.opts.grid ? 8 : 5;
         ctx.stroke(path);
         ctx.globalAlpha = 0.9;
         ctx.lineWidth = this.opts.grid ? 2 : 1.6;
@@ -212,8 +212,8 @@ export class Scope {
         // Strahlpunkt
         if (xEnd < 1) {
             const y = mid - this.value(xEnd) * amp;
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(xEnd * w, y, 2.6, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = color;
+            ctx.beginPath(); ctx.arc(xEnd * w, y, 3, 0, Math.PI * 2); ctx.fill();
         }
 
         if (this.opts.interactive && this.pointer) this.drawCursor(ctx, w, h, mid, amp, color);
@@ -242,7 +242,7 @@ export class Scope {
         const x = this.pointer.x;
         const v = this.value(x);
         const px = x * w, py = mid - v * amp;
-        ctx.strokeStyle = 'rgba(231,238,242,.35)';
+        ctx.strokeStyle = 'rgba(11,26,38,.28)';
         ctx.setLineDash([3, 4]);
         ctx.beginPath(); ctx.moveTo(px + 0.5, 0); ctx.lineTo(px + 0.5, h); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(0, py + 0.5); ctx.lineTo(w, py + 0.5); ctx.stroke();

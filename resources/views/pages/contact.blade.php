@@ -90,7 +90,7 @@
             <aside>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="h-3" style="font-size:1.35rem">Direkter Draht</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">Direkter Draht</h2>
                         <ul class="checklist">
                             @if ($site->get('email'))
                                 <li><x-glyph name="mail" style="color:var(--sine)" /><a href="mailto:{{ $site->get('email') }}">{{ $site->get('email') }}</a></li>
@@ -106,7 +106,7 @@
                 </div>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="h-3" style="font-size:1.35rem">Das hilft uns bei Prüfanfragen</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">Das hilft uns bei Prüfanfragen</h2>
                         <ul class="checklist">
                             <li><x-glyph name="check" /><span>Masse und Abmessungen des Prüflings</span></li>
                             <li><x-glyph name="check" /><span>Norm, Prüfschärfe oder Kundenspezifikation</span></li>

@@ -15,7 +15,7 @@
             @foreach (\App\Support\Catalog::SERVICE_CATEGORIES as $key => $label)
                 @continue(! isset($servicesByCategory[$key]))
                 <section aria-labelledby="cat-{{ $key }}" class="stack-m" style="margin-bottom: 2.5rem">
-                    <h2 class="h-3" id="cat-{{ $key }}">{{ $label }}</h2>
+                    <h2 class="hd-3" id="cat-{{ $key }}">{{ $label }}</h2>
                     <div class="cards">
                         @foreach ($servicesByCategory[$key] as $service)
                             <a class="card" data-spotlight href="{{ route('services.show', $service) }}">
