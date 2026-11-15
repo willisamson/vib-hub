@@ -128,10 +128,13 @@ class ContentSeeder extends Seeder
             ],
         ];
 
+        $en = EnglishContent::services();
+
         foreach ($services as $i => $data) {
+            $slug = Str::slug($data['title'], '-', 'de');
             Service::query()->updateOrCreate(
-                ['slug' => Str::slug($data['title'], '-', 'de')],
-                $data + ['sort' => ($i + 1) * 10, 'is_published' => true],
+                ['slug' => $slug],
+                $data + ['sort' => ($i + 1) * 10, 'is_published' => true, 'en' => $en[$slug] ?? null],
             );
         }
     }
@@ -201,10 +204,13 @@ class ContentSeeder extends Seeder
             ],
         ];
 
+        $en = EnglishContent::trainings();
+
         foreach ($trainings as $i => $data) {
+            $slug = Str::slug($data['title'], '-', 'de');
             Training::query()->updateOrCreate(
-                ['slug' => Str::slug($data['title'], '-', 'de')],
-                $data + ['sort' => ($i + 1) * 10, 'is_published' => true],
+                ['slug' => $slug],
+                $data + ['sort' => ($i + 1) * 10, 'is_published' => true, 'en' => $en[$slug] ?? null],
             );
         }
     }
@@ -240,6 +246,8 @@ class ContentSeeder extends Seeder
             ['DIN EN 60721-3', 'Klassifizierung von Umweltbedingungen – Teil 3: Klassen von Umwelteinflussgrößen und deren Grenzwerte', 'allgemein', 'Klassen für Lagerung, Transport und ortsfesten Einsatz – Basis für die Ableitung von Prüfschärfen.', []],
         ];
 
+        $en = EnglishContent::norms();
+
         foreach ($norms as $i => [$code, $title, $category, $excerpt, $params]) {
             Norm::query()->updateOrCreate(
                 ['slug' => Str::slug($code, '-', 'de')],
@@ -252,6 +260,7 @@ class ContentSeeder extends Seeder
                     'body' => null,
                     'sort' => ($i + 1) * 10,
                     'is_published' => true,
+                    'en' => $en[$code] ?? null,
                 ],
             );
         }

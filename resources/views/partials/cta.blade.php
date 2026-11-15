@@ -1,10 +1,10 @@
 <section class="section section--bolts" aria-labelledby="cta-title">
     <div class="container cta">
         <div>
-            <h2 class="hd-1" id="cta-title">Was bringt Ihr Produkt zum Schwingen?</h2>
-            <p class="lede">Schicken Sie uns Ihre Spezifikation, eine Messung oder einfach eine Beschreibung des Problems. Sie bekommen eine fachliche Rückmeldung – kein Formschreiben.</p>
+            <h2 class="hd-1" id="cta-title">{{ __('Was bringt Ihr Produkt zum Schwingen?') }}</h2>
+            <p class="lede">{{ __('Schicken Sie uns Ihre Spezifikation, eine Messung oder einfach eine Beschreibung des Problems. Sie bekommen eine fachliche Rückmeldung – kein Formschreiben.') }}</p>
             <div class="cta__actions">
-                <a class="btn btn--primary" href="{{ route('contact') }}">Anfrage stellen</a>
+                <a class="btn btn--primary" href="{{ lroute('contact') }}">{{ __('Anfrage stellen') }}</a>
                 @if ($site->get('phone'))
                     <a class="btn" href="tel:{{ preg_replace('/[^0-9+]/', '', $site->get('phone')) }}"><x-glyph name="phone" /> {{ $site->get('phone') }}</a>
                 @elseif ($site->get('email'))

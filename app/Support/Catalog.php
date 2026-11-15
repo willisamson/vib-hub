@@ -83,6 +83,6 @@ class Catalog
 
     public static function label(array $list, ?string $key): string
     {
-        return $list[$key] ?? (string) $key;
+        return __($list[$key] ?? (string) $key);
     }
 }

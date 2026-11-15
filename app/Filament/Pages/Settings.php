@@ -49,6 +49,8 @@ class Settings extends Page
         'hero_kicker', 'hero_title', 'hero_text', 'stats',
         'footer_text', 'imprint', 'privacy',
         'app_name', 'app_url', 'app_text', 'app_image',
+        'tagline_en', 'meta_description_en', 'hero_kicker_en', 'hero_title_en', 'hero_text_en',
+        'footer_text_en', 'app_text_en', 'imprint_en', 'privacy_en',
     ];
 
     public function mount(): void
@@ -138,6 +140,8 @@ class Settings extends Page
                                                 TextInput::make('value')->label('Zahl')->required()->maxLength(12),
                                                 TextInput::make('suffix')->label('Zusatz')->maxLength(20),
                                                 TextInput::make('label')->label('Beschriftung')->required()->maxLength(60),
+                                                TextInput::make('suffix_en')->label('Zusatz (EN)')->maxLength(20),
+                                                TextInput::make('label_en')->label('Beschriftung (EN)')->maxLength(60)->columnSpan(2),
                                             ])
                                             ->columns(3)
                                             ->maxItems(4)
@@ -163,6 +167,23 @@ class Settings extends Page
                                             ->visibility('public')
                                             ->acceptedFileTypes(['image/png', 'image/webp', 'image/jpeg'])
                                             ->maxSize(4096),
+                                    ]),
+                            ]),
+                        Tab::make('English')
+                            ->icon(Heroicon::OutlinedLanguage)
+                            ->schema([
+                                Section::make('Englische Website (/en)')
+                                    ->description('Leere Felder: Solange der deutsche Text unverändert ist, erscheint ein mitgelieferter englischer Standardtext – sonst der deutsche Text.')
+                                    ->schema([
+                                        TextInput::make('tagline_en')->label('Slogan (EN)'),
+                                        Textarea::make('meta_description_en')->label('Beschreibung für Suchmaschinen (EN)')->rows(2)->maxLength(300),
+                                        TextInput::make('hero_kicker_en')->label('Überzeile Startseite (EN)'),
+                                        TextInput::make('hero_title_en')->label('Überschrift Startseite (EN)')->maxLength(120),
+                                        Textarea::make('hero_text_en')->label('Einleitungstext Startseite (EN)')->rows(3),
+                                        Textarea::make('app_text_en')->label('App-Kurzbeschreibung (EN)')->rows(2),
+                                        Textarea::make('footer_text_en')->label('Text im Seitenfuß (EN)')->rows(2),
+                                        Textarea::make('imprint_en')->label('Legal notice / Impressum (EN, optional)')->rows(8),
+                                        Textarea::make('privacy_en')->label('Privacy policy (EN, optional)')->rows(8),
                                     ]),
                             ]),
                         Tab::make('Rechtliches')

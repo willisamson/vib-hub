@@ -86,6 +86,24 @@ class NormResource extends Resource
                     RichEditor::make('body')->label('Erläuterung'),
                     Toggle::make('is_published')->label('Veröffentlicht')->default(true),
                 ]),
+            Section::make('English (/en)')
+                ->description('Leere Felder zeigen auf der englischen Website den deutschen Text.')
+                ->columnSpanFull()
+                ->collapsible()
+                ->schema([
+                    TextInput::make('en.title')->label('Title'),
+                    Textarea::make('en.excerpt')->label('Short description')->rows(3),
+                    Repeater::make('en.parameters')
+                        ->label('Typical test parameters')
+                        ->schema([
+                            TextInput::make('label')->label('Parameter'),
+                            TextInput::make('value')->label('Value'),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Add parameter')
+                        ->defaultItems(0),
+                    RichEditor::make('en.body')->label('Explanation'),
+                ]),
         ]);
     }
 

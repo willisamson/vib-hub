@@ -111,6 +111,21 @@ class TrainingResource extends Resource
                     Toggle::make('is_published')->label('Veröffentlicht')->default(true),
                     TextInput::make('sort')->label('Reihenfolge')->numeric()->default(0),
                 ]),
+            Section::make('English (/en)')
+                ->description('Leere Felder zeigen auf der englischen Website den deutschen Text.')
+                ->columnSpanFull()
+                ->collapsible()
+                ->schema([
+                    TextInput::make('en.title')->label('Title'),
+                    TextInput::make('en.duration')->label('Duration')->placeholder('e.g. 2 days'),
+                    Textarea::make('en.excerpt')->label('Short description')->rows(3),
+                    Repeater::make('en.topics')
+                        ->label('Topics / agenda')
+                        ->simple(TextInput::make('topic')->maxLength(200))
+                        ->addActionLabel('Add topic')
+                        ->defaultItems(0),
+                    RichEditor::make('en.body')->label('Description'),
+                ]),
         ]);
     }
 

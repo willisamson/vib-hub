@@ -5,7 +5,7 @@
             <img src="{{ $site->appImageUrl() }}" alt="Screenshot der App {{ $site->get('app_name') }}" loading="lazy">
         @else
             <div class="phone__bar"><span>{{ $site->get('app_name') }}</span></div>
-            <div class="phone__tabs"><span>Einfach</span><span aria-current="true">PSD</span></div>
+            <div class="phone__tabs"><span>{{ __('Einfach') }}</span><span aria-current="true">PSD</span></div>
             <svg class="phone__chart" viewBox="0 0 220 140" role="presentation">
                 <g stroke="var(--line)" stroke-width="1">
                     <line x1="24" y1="10" x2="24" y2="118"/><line x1="24" y1="118" x2="214" y2="118"/>
@@ -20,12 +20,12 @@
                 </g>
             </svg>
             <dl class="phone__values">
-                <div><dt>Grms</dt><dd>6,06 g</dd></div>
-                <div><dt>Kraft 3σ</dt><dd>2,14 kN</dd></div>
-                <div><dt>Hub p-p</dt><dd>1,16 mm</dd></div>
-                <div class="is-ok"><dt>Grenzwert</dt><dd>OK</dd></div>
+                <div><dt>Grms</dt><dd>{{ dec('6,06') }} g</dd></div>
+                <div><dt>{{ __('Kraft 3σ') }}</dt><dd>{{ dec('2,14') }} kN</dd></div>
+                <div><dt>{{ __('Hub p-p') }}</dt><dd>{{ dec('1,16') }} mm</dd></div>
+                <div class="is-ok"><dt>{{ __('Grenzwert') }}</dt><dd>OK</dd></div>
             </dl>
-            <div class="phone__btn">Als PDF exportieren</div>
+            <div class="phone__btn">{{ __('Als PDF exportieren') }}</div>
         @endif
     </div>
 </div>

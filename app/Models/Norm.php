@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Support\Catalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Norm extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'code', 'slug', 'title', 'category', 'excerpt', 'body', 'parameters',
-        'is_published', 'sort',
+        'is_published', 'sort', 'en',
     ];
 
     protected function casts(): array
@@ -19,6 +22,7 @@ class Norm extends Model
             'parameters' => 'array',
             'is_published' => 'boolean',
             'sort' => 'integer',
+            'en' => 'array',
         ];
     }
 

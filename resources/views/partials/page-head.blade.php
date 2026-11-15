@@ -2,10 +2,10 @@
 <header class="page-head">
     <div class="container">
         @if (! empty($crumbs))
-            <ol class="crumbs" aria-label="Brotkrumen">
-                <li><a href="{{ route('home') }}">Start</a></li>
+            <ol class="crumbs" aria-label="{{ __('Brotkrumen') }}">
+                <li><a href="{{ lroute('home') }}">{{ __('Start') }}</a></li>
                 @foreach ($crumbs as $label => $url)
-                    <li>@if ($url)<a href="{{ $url }}">{{ $label }}</a>@else<span aria-current="page">{{ $label }}</span>@endif</li>
+                    <li>@if ($url)<a href="{{ $url }}">{{ __($label) }}</a>@else<span aria-current="page">{{ __($label) }}</span>@endif</li>
                 @endforeach
             </ol>
         @endif

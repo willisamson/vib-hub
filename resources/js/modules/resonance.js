@@ -1,6 +1,7 @@
 // Interaktive Demos: Resonanzbeseitigung und Schwingungsisolierung.
 import { denHartog, fmt, frf, num, transmissibility } from './vibmath.js';
 import { drawPlot, logspace } from './plot.js';
+import { t } from './i18n.js';
 
 const cssVar = (n, fb) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || fb;
 
@@ -41,13 +42,13 @@ export function initResonanceDemo(root) {
         const accent = cssVar('--sine', '#3ee6ff');
 
         drawPlot(canvas, {
-            x: { min: 20, max: 100, label: 'Frequenz in Hz' },
-            y: { min: 0.1, max: 40, log: true, label: 'Überhöhung (×)' },
+            x: { min: 20, max: 100, label: t('Frequenz in Hz', 'Frequency in Hz') },
+            y: { min: 0.1, max: 40, log: true, label: t('Überhöhung (×)', 'Amplification (×)') },
             series: [
                 ...(measure === 'original' ? [] : [{ points: base, color: cssVar('--muted', '#8da2ae'), width: 1.4, dash: [5, 5] }]),
                 { points: pts, color: accent, width: 2.4, fill: 'rgba(62,230,255,.07)' },
             ],
-            vlines: [{ x: fop, color: cssVar('--shock', '#ffb547'), label: `Betrieb ${fmt(fop, 3)} Hz` }],
+            vlines: [{ x: fop, color: cssVar('--shock', '#ffb547'), label: `${t('Betrieb', 'Operation')} ${fmt(fop, 3)} Hz` }],
             markers: [{ x: fop, y: yOp, color: cssVar('--shock', '#ffb547') }],
         });
 
@@ -89,16 +90,16 @@ export function initIsolationDemo(root) {
         const r = fex / f0;
         const T = transmissibility(r, z);
         drawPlot(canvas, {
-            x: { min: 0.1, max: 10, log: true, label: 'Frequenzverhältnis f / f₀' },
-            y: { min: 0.01, max: 50, log: true, label: 'Übertragung T' },
+            x: { min: 0.1, max: 10, log: true, label: t('Frequenzverhältnis f / f₀', 'Frequency ratio f / f₀') },
+            y: { min: 0.01, max: 50, log: true, label: t('Übertragung T', 'Transmissibility T') },
             bands: [{ x0: Math.SQRT2, x1: 10, color: 'rgba(91,228,155,.07)' }],
             series: [{ points: ratios.map((x) => [x, transmissibility(x, z)]), color: cssVar('--sine', '#3ee6ff'), width: 2.2 }],
-            vlines: [{ x: Math.SQRT2, color: cssVar('--ok', '#5be49b'), label: 'Isolierbereich ab √2' }],
+            vlines: [{ x: Math.SQRT2, color: cssVar('--ok', '#5be49b'), label: t('Isolierbereich ab √2', 'Isolation above √2') }],
             markers: [{ x: r, y: T, color: cssVar('--shock', '#ffb547') }],
         });
         out('T').textContent = fmt(T, 3);
         const eff = (1 - T) * 100;
-        out('eff').textContent = r > Math.SQRT2 ? `${fmt(eff, 3)} % isoliert` : `Verstärkung ×${fmt(T, 3)}`;
+        out('eff').textContent = r > Math.SQRT2 ? `${fmt(eff, 3)} % ${t('isoliert', 'isolated')}` : `${t('Verstärkung', 'Amplification')} ×${fmt(T, 3)}`;
         out('eff').dataset.trend = r > Math.SQRT2 ? 'down' : 'up';
     };
 

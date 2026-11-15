@@ -1,6 +1,7 @@
 // Oszilloskop-Darstellung für Sinus, Random und Schock (Hero + kleine Signalanzeigen).
 import { G, fmt, randomStats, resolveProfile, PSD_PRESETS, shock, sine } from './vibmath.js';
 import { sizeCanvas } from './plot.js';
+import { t } from './i18n.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cssVar = (name, fb) => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fb;
@@ -66,26 +67,27 @@ const hs = shock('halfsine', 50, 11);
 
 export const READOUTS = {
     sine: [
-        ['Frequenz', '80 Hz'],
-        ['Spitze', '5 g'],
-        ['Effektiv', `${fmt(s80.accRms / G, 3)} g`],
-        ['Weg', `±${fmt(s80.dispPeak * 1000, 3)} mm`],
+        [t('Frequenz', 'Frequency'), '80 Hz'],
+        [t('Spitze', 'Peak'), '5 g'],
+        [t('Effektiv', 'RMS'), `${fmt(s80.accRms / G, 3)} g`],
+        [t('Weg', 'Displacement'), `±${fmt(s80.dispPeak * 1000, 3)} mm`],
     ],
     random: [
         ['Band', '20–2000 Hz'],
-        ['PSD', '0,04 g²/Hz'],
-        ['Effektiv', `${fmt(navmat.grms, 3)} g`],
-        ['Profil', 'NAVMAT'],
+        ['PSD', `${fmt(0.04, 2)} g²/Hz`],
+        [t('Effektiv', 'RMS'), `${fmt(navmat.grms, 3)} g`],
+        [t('Profil', 'Profile'), 'NAVMAT'],
     ],
     shock: [
-        ['Puls', 'Halbsinus'],
-        ['Spitze', '50 g'],
-        ['Dauer', '11 ms'],
+        [t('Puls', 'Pulse'), t('Halbsinus', 'Half-sine')],
+        [t('Spitze', 'Peak'), '50 g'],
+        [t('Dauer', 'Duration'), '11 ms'],
         ['Δv', `${fmt(hs.dv, 3)} m/s`],
     ],
 };
 
-export const NORMS = { sine: 'DIN EN 60068-2-6', random: 'DIN EN 60068-2-64', shock: 'DIN EN 60068-2-27' };
+const NORM_PREFIX = t('DIN EN ', 'IEC ');
+export const NORMS = { sine: `${NORM_PREFIX}60068-2-6`, random: `${NORM_PREFIX}60068-2-64`, shock: `${NORM_PREFIX}60068-2-27` };
 
 /* -------------------------------------------------------------- Scope */
 

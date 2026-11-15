@@ -41,7 +41,7 @@ function label(v) {
         const m = v / Math.pow(10, e);
         return (Math.abs(m - 1) < 1e-9 ? '' : `${+m.toFixed(1)}·`) + `10${superscript(e)}`;
     }
-    return (+v.toPrecision(3)).toLocaleString('de-DE');
+    return (+v.toPrecision(3)).toLocaleString(document.documentElement.lang === 'en' ? 'en-US' : 'de-DE');
 }
 
 function superscript(n) {
@@ -203,5 +203,7 @@ export function logspace(a, b, n) {
     const out = [];
     const la = Math.log(a), lb = Math.log(b);
     for (let i = 0; i < n; i++) out.push(Math.exp(la + ((lb - la) * i) / (n - 1)));
+    out[0] = a;
+    out[n - 1] = b; // exakte Endpunkte (Rundungsfehler würden aus dem Profil fallen)
     return out;
 }

@@ -100,6 +100,11 @@ class SiteController extends Controller
         return view('pages.calculators');
     }
 
+    public function simulator(): View
+    {
+        return view('pages.simulator');
+    }
+
     public function app(Site $site): View
     {
         abort_unless($site->appUrl(), 404);
@@ -119,13 +124,16 @@ class SiteController extends Controller
 
     public function sitemap(): Response
     {
-        $urls = collect([
-            route('home'), route('services.index'), route('trainings.index'),
-            route('norms.index'), route('calculators'), route('app'), route('contact'),
-        ])
-            ->merge(Service::query()->published()->pluck('slug')->map(fn ($s) => route('services.show', $s)))
-            ->merge(Training::query()->published()->pluck('slug')->map(fn ($s) => route('trainings.show', $s)))
-            ->merge(Norm::query()->published()->pluck('slug')->map(fn ($s) => route('norms.show', $s)));
+        $urls = collect();
+
+        foreach (['de', 'en'] as $locale) {
+            foreach (['home', 'services.index', 'trainings.index', 'norms.index', 'calculators', 'simulator', 'app', 'contact'] as $name) {
+                $urls->push(lroute($name, [], $locale));
+            }
+            Service::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('services.show', $s, $locale)));
+            Training::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('trainings.show', $s, $locale)));
+            Norm::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('norms.show', $s, $locale)));
+        }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
             .'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n"

@@ -32,7 +32,7 @@ class ContactController extends Controller
     {
         // Spam-Falle: echte Besucher sehen dieses Feld nicht
         if (filled($request->input('website'))) {
-            return redirect()->route('contact')->with('sent', true);
+            return redirect()->to(lroute('contact'))->with('sent', true);
         }
 
         $data = $request->validate([
@@ -45,16 +45,20 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'min:10', 'max:5000'],
             'privacy' => ['accepted'],
         ], [
-            'privacy.accepted' => 'Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.',
-            'message.min' => 'Bitte beschreiben Sie Ihr Anliegen in ein paar Worten.',
+            'privacy.accepted' => __('Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.'),
+            'message.min' => __('Bitte beschreiben Sie Ihr Anliegen in ein paar Worten.'),
         ], [
-            'name' => 'Name',
-            'email' => 'E-Mail',
-            'topic' => 'Thema',
-            'message' => 'Nachricht',
+            'name' => __('Name'),
+            'email' => __('E-Mail'),
+            'topic' => __('Thema'),
+            'message' => __('Nachricht'),
         ]);
 
         unset($data['privacy']);
+
+        if (app()->getLocale() === 'en') {
+            $data['reference'] = trim('[EN] '.($data['reference'] ?? ''));
+        }
 
         $inquiry = Inquiry::query()->create($data + [
             'status' => 'neu',
@@ -74,7 +78,7 @@ class ContactController extends Controller
             }
         }
 
-        return redirect()->route('contact')->with('sent', true);
+        return redirect()->to(lroute('contact'))->with('sent', true);
     }
 
     protected function mailText(Inquiry $inquiry): string
@@ -82,7 +86,7 @@ class ContactController extends Controller
         return implode("\n", array_filter([
             'Neue Anfrage über vib-hub.com',
             '',
-            'Thema:   '.$inquiry->topicLabel(),
+            'Thema:   '.(Catalog::INQUIRY_TOPICS[$inquiry->topic] ?? $inquiry->topic),
             $inquiry->reference ? 'Bezug:   '.$inquiry->reference : null,
             'Name:    '.$inquiry->name,
             $inquiry->company ? 'Firma:   '.$inquiry->company : null,

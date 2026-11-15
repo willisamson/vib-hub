@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Support\Catalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'title', 'slug', 'category', 'icon', 'excerpt', 'body', 'features',
-        'demo', 'is_featured', 'is_published', 'sort',
+        'demo', 'is_featured', 'is_published', 'sort', 'en',
     ];
 
     protected function casts(): array
@@ -20,6 +23,7 @@ class Service extends Model
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
             'sort' => 'integer',
+            'en' => 'array',
         ];
     }
 

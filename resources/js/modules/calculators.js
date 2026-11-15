@@ -1,6 +1,7 @@
 // Rechner der Seite /berechnungen (und Mini-Rechner auf der Startseite).
 import * as V from './vibmath.js';
 import { drawPlot, logspace } from './plot.js';
+import { t, locale } from './i18n.js';
 
 const cssVar = (n, fb) => getComputedStyle(document.documentElement).getPropertyValue(n).trim() || fb;
 const { fmt, num, G } = V;
@@ -38,7 +39,7 @@ function initSine(root) {
         const kind = root.querySelector('[name="kind"]').value;
         const raw = val(root, 'value');
         const ok = f > 0 && raw > 0;
-        setError(root, ok ? null : 'Bitte Frequenz und Wert größer 0 eingeben.');
+        setError(root, ok ? null : t('Bitte Frequenz und Wert größer 0 eingeben.', 'Please enter a frequency and value greater than 0.'));
         let point = null;
         if (ok) {
             const map = {
@@ -72,14 +73,14 @@ function initSine(root) {
                 const freqs = logspace(5, 2000, 300);
                 const pts = freqs.map((fr) => [fr, Math.min(x * Math.pow(2 * Math.PI * fr, 2) / G, aG)]);
                 const markers = point && f >= 5 && f <= 2000
-                    ? [{ x: f, y: point.accPeakG, color: cssVar('--shock', '#ffb547'), label: 'Ihr Punkt' }]
+                    ? [{ x: f, y: point.accPeakG, color: cssVar('--shock', '#ffb547'), label: t('Ihr Punkt', 'Your point') }]
                     : [];
                 const yMax = Math.max(aG * 3, markers[0]?.y * 1.5 || 0);
                 drawPlot(canvas, {
-                    x: { min: 5, max: 2000, log: true, label: 'Frequenz in Hz' },
-                    y: { min: Math.max(0.01, Math.min(pts[0][1], aG) / 2), max: yMax, log: true, label: 'Beschleunigung in g' },
+                    x: { min: 5, max: 2000, log: true, label: t('Frequenz in Hz', 'Frequency in Hz') },
+                    y: { min: Math.max(0.01, Math.min(pts[0][1], aG) / 2), max: yMax, log: true, label: t('Beschleunigung in g', 'Acceleration in g') },
                     series: [{ points: pts, color: cssVar('--sine', '#3ee6ff'), width: 2.4, fill: 'rgba(62,230,255,.06)' }],
-                    vlines: [{ x: fc, color: cssVar('--muted', '#8da2ae'), label: `Übergang ${fmt(fc, 3)} Hz` }],
+                    vlines: [{ x: fc, color: cssVar('--muted', '#8da2ae'), label: `${t('Übergang', 'Crossover')} ${fmt(fc, 3)} Hz` }],
                     markers,
                 });
             }
@@ -159,7 +160,7 @@ function initRandom(root) {
             const sl = tr.querySelector('[data-slope-info]');
             if (sl) {
                 const db = i > 0 && p ? V.slopeDbPerOct(profile[i - 1], p) : null;
-                sl.textContent = db === null ? '' : `${db > 0.05 ? '+' : ''}${(Math.abs(db) < 0.05 ? 0 : db).toLocaleString('de-DE', { maximumFractionDigits: 1, minimumFractionDigits: 1 })} dB/Okt.`;
+                sl.textContent = db === null ? '' : `${db > 0.05 ? '+' : ''}${(Math.abs(db) < 0.05 ? 0 : db).toLocaleString(locale, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} ${t('dB/Okt.', 'dB/oct')}`;
             }
         });
 
@@ -168,7 +169,7 @@ function initRandom(root) {
         const psds = profile.map((p) => p.psd);
         const pMin = Math.min(...psds), pMax = Math.max(...psds);
         drawPlot(canvas, {
-            x: { min: Math.max(1, fMin / 1.5), max: fMax * 1.5, log: true, label: 'Frequenz in Hz' },
+            x: { min: Math.max(1, fMin / 1.5), max: fMax * 1.5, log: true, label: t('Frequenz in Hz', 'Frequency in Hz') },
             y: { min: pMin / 4, max: pMax * 4, log: true, label: 'PSD in g²/Hz' },
             series: [{ points: profile.map((p) => [p.f, p.psd]), color: cssVar('--random', '#9c7bff'), width: 2.4, fill: 'rgba(156,123,255,.10)' }],
             markers: profile.map((p) => ({ x: p.f, y: p.psd, color: cssVar('--random', '#9c7bff') })),
@@ -186,7 +187,7 @@ function initShock(root) {
         const shape = root.querySelector('[name="shape"]').value;
         const A = val(root, 'peak'), D = val(root, 'duration');
         const ok = A > 0 && D > 0;
-        setError(root, ok ? null : 'Bitte Spitzenwert und Dauer größer 0 eingeben.');
+        setError(root, ok ? null : t('Bitte Spitzenwert und Dauer größer 0 eingeben.', 'Please enter a peak value and duration greater than 0.'));
         if (ok) {
             const s = V.shock(shape, A, D);
             setOut(root, {
@@ -201,8 +202,8 @@ function initShock(root) {
                 pts.push([u * D, A * V.shockShape(shape, u)]);
             }
             drawPlot(canvas, {
-                x: { min: -0.2 * D, max: 1.2 * D, label: 'Zeit in ms' },
-                y: { min: -0.1 * A, max: 1.2 * A, label: 'Beschleunigung in g' },
+                x: { min: -0.2 * D, max: 1.2 * D, label: t('Zeit in ms', 'Time in ms') },
+                y: { min: -0.1 * A, max: 1.2 * A, label: t('Beschleunigung in g', 'Acceleration in g') },
                 series: [{ points: pts, color: cssVar('--shock', '#ffb547'), width: 2.6, fill: 'rgba(255,181,71,.10)' }],
             });
         }
@@ -257,10 +258,10 @@ function initSeverity(root) {
             const zone = V.severityZone(v, cls);
             scale.style.setProperty('--v', pos(v));
             bar.dataset.zone = zone;
-            setOut(root, { zone, 'zone-text': V.SEVERITY_ZONES[zone] });
+            setOut(root, { zone, 'zone-text': t(V.SEVERITY_ZONES[zone], V.SEVERITY_ZONES_EN[zone]) });
             root.dataset.zone = zone;
         } else {
-            setOut(root, { zone: '–', 'zone-text': 'Bitte einen Messwert eingeben.' });
+            setOut(root, { zone: '–', 'zone-text': t('Bitte einen Messwert eingeben.', 'Please enter a measured value.') });
         }
     };
     bind(root, render);

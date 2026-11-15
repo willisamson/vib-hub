@@ -122,6 +122,20 @@ class ServiceResource extends Resource
                         ])->columnSpan(1),
                     ]),
                 ]),
+            Section::make('English (/en)')
+                ->description('Leere Felder zeigen auf der englischen Website den deutschen Text.')
+                ->columnSpanFull()
+                ->collapsible()
+                ->schema([
+                    TextInput::make('en.title')->label('Title'),
+                    Textarea::make('en.excerpt')->label('Short description')->rows(3),
+                    RichEditor::make('en.body')->label('Description'),
+                    Repeater::make('en.features')
+                        ->label('Features')
+                        ->simple(TextInput::make('feature')->maxLength(160))
+                        ->addActionLabel('Add feature')
+                        ->defaultItems(0),
+                ]),
         ]);
     }
 

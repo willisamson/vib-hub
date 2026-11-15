@@ -1,6 +1,6 @@
 @php
     $isImprint = $type === 'imprint';
-    $title = $isImprint ? 'Impressum' : 'Datenschutzerklärung';
+    $title = $isImprint ? __('Impressum') : __('Datenschutzerklärung');
     $text = (string) $site->get($isImprint ? 'imprint' : 'privacy', '');
     $paragraphs = array_values(array_filter(preg_split("/\R{2,}/", trim($text)) ?: [], fn ($p) => trim($p) !== ''));
 @endphp
@@ -20,7 +20,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="empty">Der Text für „{{ $title }}“ wird im Admin unter „Website &amp; Logo“ → „Rechtliches“ gepflegt.</div>
+                <div class="empty">{{ __('Dieser Text wird gerade erstellt.') }}</div>
             @endif
         </div>
     </div>

@@ -11,7 +11,11 @@
     <title>{{ $fullTitle }}</title>
     <meta name="description" content="{{ $description }}">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="de" href="{{ switch_locale_url('de') }}">
+    <link rel="alternate" hreflang="en" href="{{ switch_locale_url('en') }}">
+    <link rel="alternate" hreflang="x-default" href="{{ switch_locale_url('de') }}">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'en' ? 'en_GB' : 'de_DE' }}">
     <meta property="og:site_name" content="{{ $site->name() }}">
     <meta property="og:title" content="{{ $fullTitle }}">
     <meta property="og:description" content="{{ $description }}">
@@ -26,7 +30,7 @@
     @stack('head')
 </head>
 <body>
-    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <a class="skip-link" href="#inhalt">{{ __('Zum Inhalt springen') }}</a>
 
     @include('partials.header')
 

@@ -42,6 +42,8 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Design | `resources/css/app.css` (Farben/Schriften oben in `:root`) |
 | Oszilloskop, Resonanz-Demo, Rechner | `resources/js/modules/` (`vibmath.js` = alle Formeln) |
 | Logo-Dateien | `public/images/` |
+| Regler-Simulator (Sinus/Random/Schock) | `resources/js/modules/sim.js`, Seite `/simulator` |
+| Englische Website (`/en/...`) | Texte: `lang/en.json` · Inhalte: Admin, Abschnitt „English (/en)“ · Startseite: Admin → Website & Logo → English |
 
 ## Rechner (vibmath.js)
 

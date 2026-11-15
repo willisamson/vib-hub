@@ -46,6 +46,22 @@ class Site
         'favicon' => null,
     ];
 
+    /** Texte, die im Admin zusätzlich auf Englisch (Schlüssel + "_en") gepflegt werden können. */
+    public const TRANSLATABLE = [
+        'tagline', 'meta_description', 'hero_kicker', 'hero_title', 'hero_text',
+        'footer_text', 'app_text', 'imprint', 'privacy',
+    ];
+
+    public const DEFAULTS_EN = [
+        'tagline' => 'Vibration testing, analysis and resonance elimination',
+        'meta_description' => 'vib-hub – vibration testing (sine, random, shock) to IEC 60068, resonance elimination, calculations, field service and training in vibration engineering.',
+        'hero_kicker' => 'Laboratory and engineering for vibration technology',
+        'hero_title' => 'Understand vibration. Master resonance.',
+        'hero_text' => 'Sine, random and shock to IEC 60068 – plus measurement, calculation and resonance elimination from a single source. We reveal what makes your product vibrate and make sure it holds.',
+        'footer_text' => 'Engineering services for vibration testing, resonance analysis and dynamic design.',
+        'app_text' => 'Calculate forces and strokes for vibration tests directly from the PSD profile – on your smartphone, offline, without ads and without data collection.',
+    ];
+
     /**
      * @return array<string, mixed>
      */
@@ -77,7 +93,21 @@ class Site
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->all()[$key] ?? $default;
+        $all = $this->all();
+        $value = $all[$key] ?? $default;
+
+        if (app()->getLocale() === 'en' && in_array($key, self::TRANSLATABLE, true)) {
+            $en = $all[$key.'_en'] ?? null;
+            if (is_string($en) && trim($en) !== '') {
+                return $en;
+            }
+            // Unveränderter deutscher Standardtext → englischer Standardtext
+            if (isset(self::DEFAULTS_EN[$key]) && $value === (self::DEFAULTS[$key] ?? null)) {
+                return self::DEFAULTS_EN[$key];
+            }
+        }
+
+        return $value;
     }
 
     public function name(): string
@@ -136,7 +166,16 @@ class Site
     public function stats(): array
     {
         $stats = $this->get('stats');
+        $stats = is_array($stats) && count($stats) ? array_values($stats) : self::DEFAULTS['stats'];
 
-        return is_array($stats) && count($stats) ? array_values($stats) : self::DEFAULTS['stats'];
+        if (app()->getLocale() !== 'en') {
+            return $stats;
+        }
+
+        return array_map(fn (array $s): array => [
+            'value' => $s['value'] ?? '',
+            'suffix' => filled($s['suffix_en'] ?? null) ? $s['suffix_en'] : __($s['suffix'] ?? ''),
+            'label' => filled($s['label_en'] ?? null) ? $s['label_en'] : __($s['label'] ?? ''),
+        ], $stats);
     }
 }

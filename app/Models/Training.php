@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Support\Catalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,9 +11,11 @@ use Illuminate\Support\Collection;
 
 class Training extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'title', 'slug', 'level', 'format', 'duration', 'price', 'excerpt',
-        'body', 'topics', 'dates', 'is_published', 'sort',
+        'body', 'topics', 'dates', 'is_published', 'sort', 'en',
     ];
 
     protected function casts(): array
@@ -23,6 +26,7 @@ class Training extends Model
             'price' => 'decimal:2',
             'is_published' => 'boolean',
             'sort' => 'integer',
+            'en' => 'array',
         ];
     }
 

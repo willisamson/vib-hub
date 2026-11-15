@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Kontakt & Anfrage')
-@section('description', 'Anfrage zu Schwingungsprüfung, Resonanzbeseitigung, Berechnung, Service oder Schulung stellen.')
+@section('title', __('Kontakt & Anfrage'))
+@section('description', __('Anfrage zu Schwingungsprüfung, Resonanzbeseitigung, Berechnung, Service oder Schulung stellen.'))
 
 @section('content')
     @include('partials.page-head', [
-        'title' => 'Anfrage stellen',
-        'lede' => 'Je konkreter, desto schneller: Prüfling, Abmessungen und Masse, Norm oder Spezifikation, gewünschter Termin. Messdaten oder Zeichnungen schicken wir Ihnen gern per Upload-Link nach.',
-        'crumbs' => ['Kontakt' => null],
+        'title' => __('Anfrage stellen'),
+        'lede' => __('Je konkreter, desto schneller: Prüfling, Abmessungen und Masse, Norm oder Spezifikation, gewünschter Termin. Messdaten oder Zeichnungen schicken wir Ihnen gern per Upload-Link nach.'),
+        'crumbs' => [__('Kontakt') => null],
     ])
 
     <div class="section">
@@ -15,73 +15,73 @@
             <div>
                 @if (session('sent'))
                     <div class="alert alert--ok" role="status" style="margin-bottom:1.5rem">
-                        <strong>Vielen Dank – Ihre Anfrage ist angekommen.</strong><br>
-                        Wir melden uns in der Regel innerhalb eines Werktags bei Ihnen.
+                        <strong>{{ __('Vielen Dank – Ihre Anfrage ist angekommen.') }}</strong><br>
+                        {{ __('Wir melden uns in der Regel innerhalb eines Werktags bei Ihnen.') }}
                     </div>
                 @endif
 
                 @if ($errors->any())
                     <div class="alert alert--error" role="alert" style="margin-bottom:1.5rem">
-                        Bitte prüfen Sie die markierten Felder.
+                        {{ __('Bitte prüfen Sie die markierten Felder.') }}
                     </div>
                 @endif
 
-                <form class="panel" method="POST" action="{{ route('contact.store') }}" novalidate>
+                <form class="panel" method="POST" action="{{ lroute('contact.store') }}" novalidate>
                     @csrf
                     <div class="panel__body stack-m">
                         <div class="form-grid">
                             <div class="field">
-                                <label for="c-name">Name *</label>
+                                <label for="c-name">{{ __('Name *') }}</label>
                                 <input class="input" id="c-name" name="name" autocomplete="name" value="{{ old('name') }}" required @error('name') aria-invalid="true" aria-describedby="e-name" @enderror>
                                 @error('name')<span class="error-text" id="e-name">{{ $message }}</span>@enderror
                             </div>
                             <div class="field">
-                                <label for="c-company">Firma</label>
+                                <label for="c-company">{{ __('Firma') }}</label>
                                 <input class="input" id="c-company" name="company" autocomplete="organization" value="{{ old('company') }}">
                             </div>
                             <div class="field">
-                                <label for="c-email">E-Mail *</label>
+                                <label for="c-email">{{ __('E-Mail *') }}</label>
                                 <input class="input" id="c-email" type="email" name="email" autocomplete="email" value="{{ old('email') }}" required @error('email') aria-invalid="true" aria-describedby="e-email" @enderror>
                                 @error('email')<span class="error-text" id="e-email">{{ $message }}</span>@enderror
                             </div>
                             <div class="field">
-                                <label for="c-phone">Telefon</label>
+                                <label for="c-phone">{{ __('Telefon') }}</label>
                                 <input class="input" id="c-phone" type="tel" name="phone" autocomplete="tel" value="{{ old('phone') }}">
                             </div>
                             <div class="field full">
-                                <label for="c-topic">Thema *</label>
+                                <label for="c-topic">{{ __('Thema *') }}</label>
                                 <select class="select" id="c-topic" name="topic" required>
                                     @foreach ($topics as $key => $label)
-                                        <option value="{{ $key }}" @selected(old('topic', $preset['topic'] ?? 'pruefung') === $key)>{{ $label }}</option>
+                                        <option value="{{ $key }}" @selected(old('topic', $preset['topic'] ?? 'pruefung') === $key)>{{ __($label) }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="field full">
-                                <label for="c-ref">Bezug</label>
-                                <input class="input" id="c-ref" name="reference" value="{{ old('reference', $preset['reference'] ?? '') }}" placeholder="z. B. Norm, Schulungstermin, Projekt">
+                                <label for="c-ref">{{ __('Bezug') }}</label>
+                                <input class="input" id="c-ref" name="reference" value="{{ old('reference', $preset['reference'] ?? '') }}" placeholder="{{ __('z. B. Norm, Schulungstermin, Projekt') }}">
                             </div>
                             <div class="field full">
-                                <label for="c-msg">Ihr Anliegen *</label>
-                                <textarea class="textarea" id="c-msg" name="message" rows="7" required @error('message') aria-invalid="true" aria-describedby="e-msg" @enderror placeholder="Was soll geprüft, gemessen oder berechnet werden?">{{ old('message') }}</textarea>
+                                <label for="c-msg">{{ __('Ihr Anliegen *') }}</label>
+                                <textarea class="textarea" id="c-msg" name="message" rows="7" required @error('message') aria-invalid="true" aria-describedby="e-msg" @enderror placeholder="{{ __('Was soll geprüft, gemessen oder berechnet werden?') }}">{{ old('message') }}</textarea>
                                 @error('message')<span class="error-text" id="e-msg">{{ $message }}</span>@enderror
                             </div>
                         </div>
 
                         <div class="hp" aria-hidden="true">
-                            <label for="c-website">Website</label>
+                            <label for="c-website">{{ __('Website') }}</label>
                             <input id="c-website" name="website" tabindex="-1" autocomplete="off">
                         </div>
 
                         <div class="field">
                             <label style="display:flex; gap:.7rem; align-items:flex-start; font-weight:400">
                                 <input type="checkbox" name="privacy" value="1" @checked(old('privacy')) style="margin-top:.3rem; width:18px; height:18px; accent-color: var(--sine)">
-                                <span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage gespeichert werden. Mehr dazu in der <a class="link" href="{{ route('privacy') }}">Datenschutzerklärung</a>.</span>
+                                <span>{{ __('Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage gespeichert werden. Mehr dazu in der') }} <a class="link" href="{{ lroute('privacy') }}">{{ __('Datenschutzerklärung') }}</a>.</span>
                             </label>
                             @error('privacy')<span class="error-text">{{ $message }}</span>@enderror
                         </div>
 
                         <div>
-                            <button class="btn btn--primary" type="submit">Anfrage senden</button>
+                            <button class="btn btn--primary" type="submit">{{ __('Anfrage senden') }}</button>
                         </div>
                     </div>
                 </form>
@@ -90,7 +90,7 @@
             <aside>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="hd-3" style="font-size:1.35rem">Direkter Draht</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Direkter Draht') }}</h2>
                         <ul class="checklist">
                             @if ($site->get('email'))
                                 <li><x-glyph name="mail" style="color:var(--sine)" /><a href="mailto:{{ $site->get('email') }}">{{ $site->get('email') }}</a></li>
@@ -106,12 +106,12 @@
                 </div>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="hd-3" style="font-size:1.35rem">Das hilft uns bei Prüfanfragen</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Das hilft uns bei Prüfanfragen') }}</h2>
                         <ul class="checklist">
-                            <li><x-glyph name="check" /><span>Masse und Abmessungen des Prüflings</span></li>
-                            <li><x-glyph name="check" /><span>Norm, Prüfschärfe oder Kundenspezifikation</span></li>
-                            <li><x-glyph name="check" /><span>Achsen, Betriebszustand während der Prüfung</span></li>
-                            <li><x-glyph name="check" /><span>Wunschtermin und Anzahl der Prüflinge</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Masse und Abmessungen des Prüflings') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Norm, Prüfschärfe oder Kundenspezifikation') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Achsen, Betriebszustand während der Prüfung') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Wunschtermin und Anzahl der Prüflinge') }}</span></li>
                         </ul>
                     </div>
                 </div>

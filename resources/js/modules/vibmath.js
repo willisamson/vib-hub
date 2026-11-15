@@ -1,6 +1,10 @@
 // Reine Rechenfunktionen der Schwingungstechnik (ohne DOM) – auch in Node testbar.
 
 export const G = 9.80665; // Normfallbeschleunigung in m/s²
+
+let numberLocale = (typeof document !== 'undefined' && (document.documentElement.lang || '').startsWith('en')) ? 'en-US' : 'de-DE';
+/** Zahlenformat der Ausgaben festlegen ('de-DE' oder 'en-US'). */
+export function setNumberLocale(l) { numberLocale = l; }
 const TWO_PI = 2 * Math.PI;
 
 /* ------------------------------------------------------------------ Sinus */
@@ -76,7 +80,7 @@ function segmentArea(p1, p2) {
 export function psdAt(profile, f) {
     for (let i = 0; i < profile.length - 1; i++) {
         const a = profile[i], b = profile[i + 1];
-        if (f >= a.f && f <= b.f) {
+        if (f >= a.f * (1 - 1e-9) && f <= b.f * (1 + 1e-9)) {
             const n = Math.log(b.psd / a.psd) / Math.log(b.f / a.f);
             return a.psd * Math.pow(f / a.f, n);
         }
@@ -230,6 +234,13 @@ export const SEVERITY_ZONES = {
     D: 'Schwingungen können Schäden verursachen',
 };
 
+export const SEVERITY_ZONES_EN = {
+    A: 'Newly commissioned machines',
+    B: 'Unrestricted long-term operation',
+    C: 'Not suitable for continuous operation – plan remedial action',
+    D: 'Vibration may cause damage',
+};
+
 export function severityZone(vrmsMmS, cls) {
     const [ab, bc, cd] = SEVERITY_CLASSES[cls].limits;
     if (vrmsMmS <= ab) return 'A';
@@ -280,13 +291,13 @@ export function fmt(value, digits = 3) {
     if (!Number.isFinite(value)) return '–';
     const abs = Math.abs(value);
     if (abs > 0 && abs < 1) {
-        return value.toLocaleString('de-DE', { maximumSignificantDigits: digits });
+        return value.toLocaleString(numberLocale, { maximumSignificantDigits: digits });
     }
     let d = digits;
     if (abs >= 1000) d = 0;
     else if (abs >= 100) d = Math.max(0, digits - 2);
     else if (abs >= 10) d = Math.max(1, digits - 1);
-    return value.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: d });
+    return value.toLocaleString(numberLocale, { minimumFractionDigits: 0, maximumFractionDigits: d });
 }
 
 /** Zahl aus deutscher oder englischer Schreibweise lesen ("1,5" oder "1.5"). */
