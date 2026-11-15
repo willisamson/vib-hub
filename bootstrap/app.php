@@ -12,7 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Kundenkonto: nicht angemeldet → Anmeldung, bereits angemeldet → Mein Konto
+        // (der Admin-Bereich hat eigene Weiterleitungen und ist davon nicht betroffen)
+        $middleware->redirectGuestsTo(fn (Request $request) => route(
+            $request->is('en', 'en/*') ? 'en.account.login' : 'account.login'
+        ));
+        $middleware->redirectUsersTo(fn (Request $request) => route(
+            $request->is('en', 'en/*') ? 'en.account.dashboard' : 'account.dashboard'
+        ));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

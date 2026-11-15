@@ -34,7 +34,7 @@
                 @endif
 
                 @if ($norm->tr('body'))
-                    <div class="prose">{!! $norm->tr('body') !!}</div>
+                    <div class="prose">{!! consent_embeds($norm->tr('body')) !!}</div>
                 @endif
 
                 <p class="muted" style="font-size:.88rem">{{ __('Angaben ohne Gewähr. Maßgeblich ist die gültige Ausgabe der Norm bzw. Ihre Kundenspezifikation.') }}</p>

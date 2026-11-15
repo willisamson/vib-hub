@@ -26,27 +26,53 @@
                     </div>
                 @endif
 
+                @if ($customer)
+                    <div class="account-hint" style="margin-bottom:1.5rem">
+                        <x-glyph name="user" />
+                        <p>{{ __('Angemeldet als :name. Ihre Kontaktdaten sind ausgefüllt, die Anfrage erscheint anschließend in Ihrem Konto.', ['name' => $customer->name]) }}</p>
+                        <a class="link" href="{{ lroute('account.dashboard') }}">{{ __('Mein Konto') }}</a>
+                    </div>
+                @elseif ($requiresAccount)
+                    <div class="panel">
+                        <div class="panel__body stack-m">
+                            <h2 class="hd-3">{{ __('Bitte melden Sie sich an') }}</h2>
+                            <p>{{ __('Anfragen nehmen wir über Ihr Kundenkonto entgegen. So sehen Sie jederzeit, wie weit Ihre Anfrage ist, und unsere Antworten an einem Ort.') }}</p>
+                            <div class="cta__actions" style="display:flex; gap:.6rem; flex-wrap:wrap">
+                                <a class="btn btn--primary" href="{{ lroute('account.register') }}">{{ __('Kundenkonto anlegen') }}</a>
+                                <a class="btn" href="{{ lroute('account.login') }}">{{ __('Anmelden') }}</a>
+                            </div>
+                        </div>
+                    </div>
+                @elseif ($site->accountsEnabled())
+                    <div class="account-hint" style="margin-bottom:1.5rem">
+                        <x-glyph name="user" />
+                        <p>{{ __('Schon Kunde? Mit Ihrem Kundenkonto sind die Kontaktdaten ausgefüllt und Sie sehen den Stand Ihrer Anfragen.') }}</p>
+                        <span class="account-hint__links"><a class="link" href="{{ lroute('account.login') }}">{{ __('Anmelden') }}</a> <a class="link" href="{{ lroute('account.register') }}">{{ __('Registrieren') }}</a></span>
+                    </div>
+                @endif
+
+                @if (! $requiresAccount || $customer)
                 <form class="panel" method="POST" action="{{ lroute('contact.store') }}" novalidate>
                     @csrf
                     <div class="panel__body stack-m">
                         <div class="form-grid">
                             <div class="field">
                                 <label for="c-name">{{ __('Name *') }}</label>
-                                <input class="input" id="c-name" name="name" autocomplete="name" value="{{ old('name') }}" required @error('name') aria-invalid="true" aria-describedby="e-name" @enderror>
+                                <input class="input" id="c-name" name="name" autocomplete="name" value="{{ old('name', $customer?->name) }}" required @error('name') aria-invalid="true" aria-describedby="e-name" @enderror>
                                 @error('name')<span class="error-text" id="e-name">{{ $message }}</span>@enderror
                             </div>
                             <div class="field">
                                 <label for="c-company">{{ __('Firma') }}</label>
-                                <input class="input" id="c-company" name="company" autocomplete="organization" value="{{ old('company') }}">
+                                <input class="input" id="c-company" name="company" autocomplete="organization" value="{{ old('company', $customer?->company) }}">
                             </div>
                             <div class="field">
                                 <label for="c-email">{{ __('E-Mail *') }}</label>
-                                <input class="input" id="c-email" type="email" name="email" autocomplete="email" value="{{ old('email') }}" required @error('email') aria-invalid="true" aria-describedby="e-email" @enderror>
+                                <input class="input" id="c-email" type="email" name="email" autocomplete="email" value="{{ old('email', $customer?->email) }}" required @error('email') aria-invalid="true" aria-describedby="e-email" @enderror>
                                 @error('email')<span class="error-text" id="e-email">{{ $message }}</span>@enderror
                             </div>
                             <div class="field">
                                 <label for="c-phone">{{ __('Telefon') }}</label>
-                                <input class="input" id="c-phone" type="tel" name="phone" autocomplete="tel" value="{{ old('phone') }}">
+                                <input class="input" id="c-phone" type="tel" name="phone" autocomplete="tel" value="{{ old('phone', $customer?->phone) }}">
                             </div>
                             <div class="field full">
                                 <label for="c-topic">{{ __('Thema *') }}</label>
@@ -85,6 +111,7 @@
                         </div>
                     </div>
                 </form>
+                @endif
             </div>
 
             <aside>

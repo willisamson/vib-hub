@@ -3,6 +3,8 @@ import { initIsolationDemo, initResonanceDemo } from './modules/resonance.js';
 import { initCalculators } from './modules/calculators.js';
 import { initHeader, initNormFilter, initSpotlight } from './modules/ui.js';
 import { initSimulator } from './modules/sim.js';
+import { initConsent } from './modules/consent.js';
+import { initReveal } from './modules/reveal.js';
 import { setNumberLocale } from './modules/vibmath.js';
 import { locale } from './modules/i18n.js';
 
@@ -12,6 +14,7 @@ const ready = (fn) => (document.readyState === 'loading' ? document.addEventList
 
 ready(() => {
     document.documentElement.classList.add('js');
+    initConsent();
     initHeader();
     initSpotlight();
     initNormFilter();
@@ -24,4 +27,5 @@ ready(() => {
     document.querySelectorAll('[data-isolation-demo]').forEach(initIsolationDemo);
     initCalculators();
     document.querySelectorAll('[data-sim]').forEach(initSimulator);
+    initReveal();
 });

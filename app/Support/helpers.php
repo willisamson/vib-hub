@@ -46,3 +46,26 @@ if (! function_exists('dec')) {
         return app()->getLocale() === 'en' ? $value : str_replace('.', ',', $value);
     }
 }
+
+if (! function_exists('consent_embeds')) {
+    /**
+     * Eingebettete Fremdinhalte (iframes, z. B. YouTube oder Karten) erst nach
+     * Einwilligung „Externe Medien“ laden: src wird durch einen Platzhalter ersetzt.
+     */
+    function consent_embeds(?string $html): string
+    {
+        if (! $html || stripos($html, '<iframe') === false) {
+            return (string) $html;
+        }
+
+        return (string) preg_replace_callback('#<iframe\b([^>]*?)\ssrc=(["\'])(.*?)\2([^>]*)>(.*?)</iframe>#is', function (array $m): string {
+            $host = parse_url(html_entity_decode($m[3]), PHP_URL_HOST) ?: __('externer Anbieter');
+
+            return '<div class="consent-embed" data-consent-embed>'
+                .'<iframe'.$m[1].' data-consent-src="'.$m[3].'"'.$m[4].'></iframe>'
+                .'<div class="consent-embed__note"><p>'.e(__('Hier ist ein Inhalt von :host eingebunden. Beim Laden werden Daten wie Ihre IP-Adresse an den Anbieter übertragen.', ['host' => $host])).'</p>'
+                .'<button type="button" class="btn btn--small" data-consent-embed-load>'.e(__('Externe Medien erlauben')).'</button></div>'
+                .'</div>';
+        }, $html);
+    }
+}

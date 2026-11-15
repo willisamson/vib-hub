@@ -25,6 +25,16 @@ class EditInquiry extends EditRecord
         ];
     }
 
+    /** Zeitpunkt der Antwort merken, wenn sich der Antworttext ändert. */
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (array_key_exists('reply', $data) && trim((string) $data['reply']) !== trim((string) $this->record->reply)) {
+            $data['replied_at'] = filled($data['reply']) ? now() : null;
+        }
+
+        return $data;
+    }
+
     protected function getRedirectUrl(): ?string
     {
         return $this->getResource()::getUrl('index');

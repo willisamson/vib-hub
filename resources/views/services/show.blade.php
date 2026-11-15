@@ -14,7 +14,7 @@
         <div class="container layout-aside">
             <article class="stack-l">
                 @if ($service->tr('body'))
-                    <div class="prose">{!! $service->tr('body') !!}</div>
+                    <div class="prose">{!! consent_embeds($service->tr('body')) !!}</div>
                 @endif
 
                 @if ($service->demo === 'resonance')

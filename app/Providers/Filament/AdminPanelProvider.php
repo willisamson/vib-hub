@@ -47,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make('Kunden'),
                 NavigationGroup::make('Inhalte'),
+                NavigationGroup::make('Website'),
                 NavigationGroup::make('System'),
             ])
             ->navigationItems([

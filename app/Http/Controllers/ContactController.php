@@ -7,6 +7,7 @@ use App\Support\Catalog;
 use App\Support\Site;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -15,11 +16,13 @@ use Throwable;
 
 class ContactController extends Controller
 {
-    public function show(Request $request): View
+    public function show(Request $request, Site $site): View
     {
         $topic = $request->query('thema');
 
         return view('pages.contact', [
+            'customer' => Auth::guard('customer')->user(),
+            'requiresAccount' => $site->contactRequiresAccount(),
             'topics' => Catalog::INQUIRY_TOPICS,
             'preset' => [
                 'topic' => array_key_exists((string) $topic, Catalog::INQUIRY_TOPICS) ? $topic : null,
@@ -33,6 +36,13 @@ class ContactController extends Controller
         // Spam-Falle: echte Besucher sehen dieses Feld nicht
         if (filled($request->input('website'))) {
             return redirect()->to(lroute('contact'))->with('sent', true);
+        }
+
+        $customer = Auth::guard('customer')->user();
+
+        // Optional (Admin → Website & Logo → Kundenkonto): nur angemeldete Kunden dürfen anfragen
+        if (! $customer && $site->contactRequiresAccount()) {
+            return redirect()->to(lroute('account.login'));
         }
 
         $data = $request->validate([
@@ -63,6 +73,7 @@ class ContactController extends Controller
         $inquiry = Inquiry::query()->create($data + [
             'status' => 'neu',
             'ip' => $request->ip(),
+            'customer_id' => $customer?->getKey(),
         ]);
 
         $to = $site->get('notify_email');
@@ -76,6 +87,10 @@ class ContactController extends Controller
             } catch (Throwable $e) {
                 Log::warning('Anfrage-Benachrichtigung konnte nicht gesendet werden: '.$e->getMessage());
             }
+        }
+
+        if ($customer) {
+            return redirect()->to(lroute('account.inquiry', $inquiry))->with('status', __('Vielen Dank – Ihre Anfrage ist angekommen. Den Stand sehen Sie hier in Ihrem Konto.'));
         }
 
         return redirect()->to(lroute('contact'))->with('sent', true);
@@ -92,6 +107,7 @@ class ContactController extends Controller
             $inquiry->company ? 'Firma:   '.$inquiry->company : null,
             'E-Mail:  '.$inquiry->email,
             $inquiry->phone ? 'Telefon: '.$inquiry->phone : null,
+            $inquiry->customer_id ? 'Kunde:   registriertes Kundenkonto (#'.$inquiry->customer_id.')' : null,
             '',
             $inquiry->message,
             '',

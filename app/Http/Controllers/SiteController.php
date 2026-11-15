@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Norm;
+use App\Models\Page;
 use App\Models\Service;
 use App\Models\Training;
 use App\Support\Catalog;
@@ -122,6 +123,13 @@ class SiteController extends Controller
         return view('pages.legal', ['type' => 'privacy']);
     }
 
+    public function page(Page $page): View
+    {
+        abort_unless($page->is_published, 404);
+
+        return view('pages.page', ['page' => $page]);
+    }
+
     public function sitemap(): Response
     {
         $urls = collect();
@@ -133,6 +141,7 @@ class SiteController extends Controller
             Service::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('services.show', $s, $locale)));
             Training::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('trainings.show', $s, $locale)));
             Norm::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('norms.show', $s, $locale)));
+            Page::query()->published()->pluck('slug')->each(fn ($s) => $urls->push(lroute('page', $s, $locale)));
         }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n"

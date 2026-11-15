@@ -12,18 +12,26 @@ const dB = (ratio) => 20 * Math.log10(ratio);
 /* -------------------------------------------------------- Prüfaufbau-Modell */
 
 // Übertragung Antriebsspannung → Regelbeschleunigung: Shaker + Vorrichtung + Prüfling
-// mit einer dominanten Resonanz (fr, Q) und Massenanteil beta.
-function plant(scenario) {
-    const base = { g0: 2.0, fr: 320, q: 12, beta: 0.5 };
-    if (scenario === 'strong') return { ...base, q: 150, beta: 0.9 };
-    return base;
+// mit bis zu zwei Resonanzen (Frequenz fr, Güte q, Massenanteil beta).
+const BETAS = [0.5, 0.35];
+
+function plant(modes) {
+    return { g0: 2.0, modes: modes.map((m, i) => ({ ...m, beta: BETAS[i] ?? 0.3 })) };
 }
 
 function gain(p, f) {
-    const r = f / p.fr;
-    const amp = 1 / Math.hypot(1 - r * r, r / p.q);           // Einmassenschwinger
-    const low = Math.hypot(1 - p.beta, p.beta);                 // Normierung: H(0) = g0
-    return p.g0 * Math.hypot(1 - p.beta, p.beta * amp) / low;
+    const B = p.modes.reduce((sum, m) => sum + m.beta, 0);
+    let res = 0;
+    for (const m of p.modes) {
+        const r = f / m.fr;
+        res += m.beta / Math.hypot(1 - r * r, r / m.q);          // Einmassenschwinger je Mode
+    }
+    return p.g0 * Math.hypot(1 - B, res) / Math.hypot(1 - B, B);  // Normierung: H(0) = g0
+}
+
+// Alle Resonanzen verschieben (Prüfling löst sich)
+function shifted(p, factor, q, g) {
+    return { ...p, g0: p.g0 * g, modes: p.modes.map((m) => ({ ...m, fr: m.fr * factor, q: Math.min(m.q, q) })) };
 }
 
 // χ²-verteilte Schätzung mit ν Freiheitsgraden (Wilson-Hilferty), normiert auf 1
@@ -63,6 +71,21 @@ export function initSimulator(root) {
 
     const val = (name) => num(root.querySelector(`[data-sim-setup="${mode}"] [name="${name}"]`)?.value);
     const sel = (name) => root.querySelector(`[name="${name}"]`)?.value;
+    const gnum = (name, fb, lo, hi) => {
+        const v = num(root.querySelector(`[data-sim-global] [name="${name}"]`)?.value);
+        return Number.isFinite(v) && v > 0 ? Math.min(hi, Math.max(lo, v)) : fb;
+    };
+    // Resonanzen des Prüfaufbaus aus den Eingaben (1. immer, 2. optional)
+    const resonances = () => {
+        const list = [{ fr: gnum('r1f', 1200, 5, 5000), q: gnum('r1q', 20, 2, 500) }];
+        if (root.querySelector('[data-sim-global] [name="r2on"]')?.checked) {
+            list.push({ fr: gnum('r2f', 1900, 5, 5000), q: gnum('r2q', 30, 2, 500) });
+        }
+        return list;
+    };
+    const resoLines = (fmin, fmax) => resonances()
+        .filter((m) => m.fr >= fmin && m.fr <= fmax)
+        .map((m, i) => ({ x: m.fr, color: cssVar('--muted', '#8da2ae'), label: `R${i + 1}`, bottom: true }));
 
     /* ---- Status & Protokoll ---- */
     const STATE_TEXT = {
@@ -82,7 +105,7 @@ export function initSimulator(root) {
         btnPause.disabled = !(s === 'running' || s === 'warning');
         btnStop.disabled = s === 'idle';
         setups.forEach((f) => f.querySelectorAll('input, select').forEach((i) => (i.disabled = s === 'running' || s === 'warning' || s === 'paused')));
-        root.querySelectorAll('[data-sim-global] input, [data-sim-global] select').forEach((i) => (i.disabled = s === 'running' || s === 'warning' || s === 'paused'));
+        root.querySelectorAll('[data-sim-global] input, [data-sim-global] select, [data-sim-global] button').forEach((i) => (i.disabled = s === 'running' || s === 'warning' || s === 'paused'));
     };
 
     const log = (msg, kind = 'info') => {
@@ -139,9 +162,9 @@ export function initSimulator(root) {
                 warn: val('warn'), abort: val('abort'),
                 speed: num(sel('speed')) || 10,
                 k: 2.5,
-                plant: plant(sel('scenario')),
+                plant: plant(resonances()),
                 scenario: sel('scenario'),
-                drive: (Math.min(x * (TWO_PI * f1) ** 2 / G, a)) / gain(plant(sel('scenario')), f1),
+                drive: (Math.min(x * (TWO_PI * f1) ** 2 / G, a)) / gain(plant(resonances()), f1),
                 trace: [],
                 errMax: 0,
                 changed: false,
@@ -160,7 +183,8 @@ export function initSimulator(root) {
                 if (s.f >= s.f2) { s.f = s.f2; return 'done'; }
                 if (s.scenario === 'loose' && !s.changed && s.f > s.f1 * Math.pow(s.f2 / s.f1, 0.62)) {
                     s.changed = true;
-                    s.plant = { ...s.plant, g0: s.plant.g0 * 2.6, fr: s.f * 1.03, q: 30 };
+                    // neue, lose Resonanz knapp oberhalb der aktuellen Frequenz
+                    s.plant = { ...s.plant, g0: s.plant.g0 * 2.6, modes: [{ fr: s.f * 1.03, q: 30, beta: 0.5 }, ...s.plant.modes.slice(1)] };
                     log(t('Prüfling löst sich – Übertragungsverhalten ändert sich sprunghaft', 'Specimen loosens – transfer function changes abruptly'), 'warn');
                 }
                 const meas = gain(s.plant, s.f) * s.drive * (1 + gauss() * 0.01);
@@ -194,7 +218,7 @@ export function initSimulator(root) {
                     { points: dem, color: cssVar('--strong', '#0b1a26'), width: 1.6 },
                     ...(s && s.trace.length > 1 ? [{ points: s.trace, color: cssVar('--sine', '#0b7fa0'), width: 2.2 }] : []),
                 ],
-                vlines: s ? [{ x: s.f, color: cssVar('--sine', '#0b7fa0'), label: `${fmt(s.f, 3)} Hz` }] : [],
+                vlines: [...resoLines(freqs[0], freqs[freqs.length - 1]), ...(s ? [{ x: s.f, color: cssVar('--sine', '#0b7fa0'), label: `${fmt(s.f, 3)} Hz` }] : [])],
             });
         },
         readouts(s) {
@@ -225,7 +249,7 @@ export function initSimulator(root) {
         create() {
             const profile = resolveProfile(PSD_PRESETS[sel('profile')].rows);
             const lines = logspace(profile[0].f, profile[profile.length - 1].f, 160);
-            const p = plant(sel('scenario'));
+            const p = plant(resonances());
             const levels = [-9, -6, -3, 0];
             return {
                 t: 0, loop: 0, levelIdx: 0, levelLoops: 0, levels, profile, lines,
@@ -252,7 +276,7 @@ export function initSimulator(root) {
 
             if (s.scenario === 'loose' && !s.changed && s.levelIdx === s.levels.length - 1 && s.levelLoops > 6) {
                 s.changed = true;
-                s.plant = { ...s.plant, fr: s.plant.fr * 0.72, q: 35, g0: s.plant.g0 * 1.8 };
+                s.plant = shifted(s.plant, 0.72, 35, 1.8);
                 log(t('Prüfling löst sich – Resonanz verschiebt sich', 'Specimen loosens – resonance shifts'), 'warn');
             }
 
@@ -317,6 +341,7 @@ export function initSimulator(root) {
                     { points: dem, color: cssVar('--strong', '#0b1a26'), width: 1.6 },
                     ...(s && s.avg ? [{ points: lines.map((f, i) => [f, s.avg[i]]), color: cssVar('--random', '#6d3fe0'), width: 1.8 }] : []),
                 ],
+                vlines: resoLines(lines[0], lines[lines.length - 1]),
             });
         },
         readouts(s) {
@@ -349,7 +374,7 @@ export function initSimulator(root) {
     const Shock = {
         create() {
             const A = val('peak'), D = val('duration') / 1000;
-            const p = plant(sel('scenario'));
+            const p = plant(resonances());
             return {
                 t: 0, A, D, tol: val('tol') / 100, abortTol: val('abortTol') / 100,
                 stroke: val('stroke') / 1000, count: val('count'),
@@ -374,13 +399,15 @@ export function initSimulator(root) {
         measured(s, eps) {
             const [t0, t1] = this.window(s);
             const N = 700;
-            const w = TWO_PI * s.plant.fr * (s.scenario === 'loose' && s.pulses >= 1 ? 0.55 : 1);
-            const z = 1 / (2 * s.plant.q);
+            const loose = s.scenario === 'loose' && s.pulses >= 1 ? 0.55 : 1;
+            // Ausschwingen je Resonanz; Anteil nach Massenanteil, Abklingen nach Güte
+            const B = s.plant.modes.reduce((sum, m) => sum + m.beta, 0);
+            const ring = s.plant.modes.map((m) => ({ w: TWO_PI * m.fr * loose, z: 1 / (2 * m.q), k: m.beta / B }));
             const pts = [];
             for (let i = 0; i <= N; i++) {
                 const tt = t0 + (t1 - t0) * i / N;
                 let a = this.ref(s, tt) * (1 + eps * 0.6);
-                if (tt > 0) a += eps * s.A * Math.exp(-z * w * tt) * Math.sin(w * tt);
+                if (tt > 0) for (const r of ring) a += eps * r.k * s.A * Math.exp(-r.z * r.w * tt) * Math.sin(r.w * tt);
                 a += gauss() * 0.006 * s.A;
                 pts.push([tt, a]);
             }
@@ -388,7 +415,9 @@ export function initSimulator(root) {
         },
         fire(s) {
             const lvl = Math.pow(10, s.levels[s.levelIdx] / 20);
-            const eps0 = s.scenario === 'strong' ? 0.7 : 0.32;
+            // Schwach gedämpfte Resonanzen (hohe Güte) erschweren die Pulsregelung
+            const qMax = Math.max(...s.plant.modes.map((m) => m.q));
+            const eps0 = Math.min(0.8, 0.22 + 0.004 * qMax);
             let eps = eps0 * Math.pow(0.42, s.iteration) + 0.03;
             if (s.scenario === 'loose' && s.pulses >= 1 && s.levelIdx === s.levels.length - 1) {
                 eps = 0.6;
@@ -577,6 +606,17 @@ export function initSimulator(root) {
             root.querySelectorAll('[data-sim-only]').forEach((el) => (el.hidden = el.dataset.simOnly !== mode));
             logEl.innerHTML = '';
             reset();
+        }),
+    );
+
+    // Vorlagen für die Resonanzen: "f1,q1,f2,q2" (leeres f2 = nur eine Resonanz)
+    root.querySelectorAll('[data-sim-preset]').forEach((b) =>
+        b.addEventListener('click', () => {
+            const [f1, q1, f2, q2] = b.dataset.simPreset.split(',');
+            const set = (n, v) => { const el = root.querySelector(`[data-sim-global] [name="${n}"]`); if (el && v) el.value = v; };
+            set('r1f', f1); set('r1q', q1); set('r2f', f2); set('r2q', q2);
+            root.querySelector('[data-sim-global] [name="r2on"]').checked = Boolean(f2);
+            if (state === 'idle' || state === 'done' || state === 'aborted') reset();
         }),
     );
 

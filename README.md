@@ -44,6 +44,18 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Logo-Dateien | `public/images/` |
 | Regler-Simulator (Sinus/Random/Schock) | `resources/js/modules/sim.js`, Seite `/simulator` |
 | Englische Website (`/en/...`) | Texte: `lang/en.json` · Inhalte: Admin, Abschnitt „English (/en)“ · Startseite: Admin → Website & Logo → English |
+| Menüs (Kopf- und Fußzeile) | Admin → **Website → Menüs** (`app/Models/MenuItem.php`, `app/Support/Menu.php`) |
+| Eigene Seiten (`/seite/...`) | Admin → **Website → Eigene Seiten** (`app/Models/Page.php`, View `pages/page`) |
+| Kundenkonto (`/konto`) | `app/Http/Controllers/Account/`, Views `resources/views/account/`, Guard `customer` in `config/auth.php` · Admin → **Kunden → Kunden** · ein/aus: Website & Logo → Kundenkonto |
+| Cookie-Hinweis | `resources/views/partials/consent.blade.php`, `resources/js/modules/consent.js` · Texte/Statistik-Code: Website & Logo → Cookies |
+| Einblenden beim Scrollen | `resources/js/modules/reveal.js` (respektiert „Bewegung reduzieren“) |
+
+### Hinweise
+
+- **Kunden** liegen in einer eigenen Tabelle `customers` und haben keinen Zugang zum Admin.
+- **Passwort vergessen** verschickt eine E-Mail – dafür muss in der `.env` ein Mailserver eingetragen sein (`MAIL_MAILER=smtp`, `MAIL_HOST`, …). Ohne Mailserver landet die Mail nur im Log.
+- **Cookie-Version** (Website & Logo → Cookies) erhöhen, wenn ein neuer Dienst dazukommt – dann werden alle Besucher erneut gefragt.
+- Eingebettete Videos/Karten (iframes) in Seiten und Leistungen laden erst nach Zustimmung zu „Externe Medien“.
 
 ## Rechner (vibmath.js)
 

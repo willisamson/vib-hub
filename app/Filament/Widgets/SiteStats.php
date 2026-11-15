@@ -4,11 +4,11 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Inquiries\InquiryResource;
 use App\Filament\Resources\Norms\NormResource;
-use App\Filament\Resources\Services\ServiceResource;
+use App\Filament\Resources\Customers\CustomerResource;
 use App\Filament\Resources\Trainings\TrainingResource;
 use App\Models\Inquiry;
 use App\Models\Norm;
-use App\Models\Service;
+use App\Models\Customer;
 use App\Models\Training;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
@@ -30,10 +30,10 @@ class SiteStats extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedInboxArrowDown)
                 ->color($new > 0 ? 'warning' : 'success')
                 ->url(InquiryResource::getUrl('index')),
-            Stat::make('Leistungen online', Service::query()->published()->count())
-                ->descriptionIcon(Heroicon::OutlinedWrenchScrewdriver)
-                ->description('Prüfung, Analyse, Engineering')
-                ->url(ServiceResource::getUrl('index')),
+            Stat::make('Kundenkonten', Customer::query()->count())
+                ->description(Customer::query()->where('created_at', '>=', now()->subDays(30))->count().' neu in den letzten 30 Tagen')
+                ->descriptionIcon(Heroicon::OutlinedUserGroup)
+                ->url(CustomerResource::getUrl('index')),
             Stat::make('Schulungstermine', $nextDates)
                 ->description('anstehend')
                 ->descriptionIcon(Heroicon::OutlinedAcademicCap)

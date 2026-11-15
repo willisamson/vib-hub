@@ -10,6 +10,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -51,6 +52,9 @@ class Settings extends Page
         'app_name', 'app_url', 'app_text', 'app_image',
         'tagline_en', 'meta_description_en', 'hero_kicker_en', 'hero_title_en', 'hero_text_en',
         'footer_text_en', 'app_text_en', 'imprint_en', 'privacy_en',
+        'accounts_enabled', 'contact_requires_account',
+        'consent_title', 'consent_text', 'consent_title_en', 'consent_text_en',
+        'consent_stats_name', 'consent_stats_snippet', 'consent_version',
     ];
 
     public function mount(): void
@@ -184,6 +188,44 @@ class Settings extends Page
                                         Textarea::make('footer_text_en')->label('Text im Seitenfuß (EN)')->rows(2),
                                         Textarea::make('imprint_en')->label('Legal notice / Impressum (EN, optional)')->rows(8),
                                         Textarea::make('privacy_en')->label('Privacy policy (EN, optional)')->rows(8),
+                                    ]),
+                            ]),
+                        Tab::make('Kundenkonto')
+                            ->icon(Heroicon::OutlinedUserCircle)
+                            ->schema([
+                                Section::make('Kundenkonten auf der Website')
+                                    ->description('Kunden können sich unter /konto registrieren, Anfragen stellen und deren Stand sehen. Antworten tragen Sie in der Anfrage unter „Antwort an den Kunden“ ein.')
+                                    ->schema([
+                                        Toggle::make('accounts_enabled')->label('Kundenkonten anbieten')->default(true),
+                                        Toggle::make('contact_requires_account')
+                                            ->label('Anfragen nur mit Kundenkonto')
+                                            ->helperText('Aus: Jeder kann das Anfrageformular nutzen, angemeldete Kunden bekommen ihre Daten vorausgefüllt. Ein: Das Formular erscheint erst nach der Anmeldung.'),
+                                    ]),
+                            ]),
+                        Tab::make('Cookies')
+                            ->icon(Heroicon::OutlinedShieldCheck)
+                            ->schema([
+                                Section::make('Hinweis zur Einwilligung')
+                                    ->description('Der Hinweis erscheint beim ersten Besuch, bis eine Auswahl gespeichert ist. Besucher können ihre Auswahl im Seitenfuß unter „Cookie-Einstellungen“ ändern.')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('consent_title')->label('Überschrift'),
+                                        TextInput::make('consent_title_en')->label('Überschrift (EN)'),
+                                        Textarea::make('consent_text')->label('Text')->rows(4),
+                                        Textarea::make('consent_text_en')->label('Text (EN)')->rows(4),
+                                        TextInput::make('consent_version')
+                                            ->label('Version der Einwilligung')
+                                            ->numeric()->minValue(1)->default(1)
+                                            ->helperText('Erhöhen, wenn neue Dienste dazukommen – dann werden alle Besucher erneut gefragt.'),
+                                    ]),
+                                Section::make('Statistik (optional)')
+                                    ->description('Code eines Statistikdienstes, z. B. Matomo. Er wird erst geladen, nachdem ein Besucher „Statistik“ zugestimmt hat. Ohne Code erscheint die Kategorie nicht.')
+                                    ->schema([
+                                        TextInput::make('consent_stats_name')->label('Name des Dienstes')->placeholder('z. B. Matomo'),
+                                        Textarea::make('consent_stats_snippet')
+                                            ->label('Einbettungscode (HTML/JavaScript)')
+                                            ->rows(8)
+                                            ->extraInputAttributes(['style' => 'font-family: ui-monospace, monospace; font-size: 13px']),
                                     ]),
                             ]),
                         Tab::make('Rechtliches')

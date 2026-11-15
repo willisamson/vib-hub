@@ -72,16 +72,32 @@
                             </div>
                         </form>
 
-                        <div class="sim__global" data-sim-global>
+                        <fieldset class="sim__global" data-sim-global>
+                            <legend>{{ __('Prüfaufbau') }}</legend>
+                            <p class="sim__hint">{{ __('Tragen Sie die Resonanzen Ihres Aufbaus ein. Eine hohe Güte bedeutet geringe Dämpfung und eine schärfere, schwerer zu regelnde Resonanz.') }}</p>
+                            <div class="sim__reso">
+                                <span class="sim__reso-tag">R1</span>
+                                <div class="field"><label for="sim-r1f">{{ __('Resonanz 1') }}</label><div class="unit-input"><input class="input input--mono" id="sim-r1f" name="r1f" value="1200" inputmode="decimal"><span>Hz</span></div></div>
+                                <div class="field"><label for="sim-r1q">{{ __('Güte Q') }}</label><input class="input input--mono" id="sim-r1q" name="r1q" value="20" inputmode="decimal"></div>
+                            </div>
+                            <div class="sim__reso">
+                                <label class="sim__reso-tag sim__reso-toggle" title="{{ __('Zweite Resonanz verwenden') }}"><input type="checkbox" name="r2on" checked> R2</label>
+                                <div class="field"><label for="sim-r2f">{{ __('Resonanz 2') }}</label><div class="unit-input"><input class="input input--mono" id="sim-r2f" name="r2f" value="1900" inputmode="decimal"><span>Hz</span></div></div>
+                                <div class="field"><label for="sim-r2q">{{ __('Güte Q') }}</label><input class="input input--mono" id="sim-r2q" name="r2q" value="30" inputmode="decimal"></div>
+                            </div>
+                            <div class="sim__presets" role="group" aria-label="{{ __('Vorlagen') }}">
+                                <button type="button" class="sim__preset" data-sim-preset="1200,20,1900,30">1200 / 1900 Hz</button>
+                                <button type="button" class="sim__preset" data-sim-preset="320,12,,">{{ __('Eine Resonanz') }} 320 Hz</button>
+                                <button type="button" class="sim__preset" data-sim-preset="1200,150,1900,120">{{ __('Kaum gedämpft') }}</button>
+                            </div>
                             <div class="field">
-                                <label for="sim-scenario">{{ __('Szenario Prüfling') }}</label>
+                                <label for="sim-scenario">{{ __('Verhalten des Prüflings') }}</label>
                                 <select class="select" id="sim-scenario" name="scenario">
-                                    <option value="normal">{{ __('Normal – Resonanz bei 320 Hz') }}</option>
-                                    <option value="strong">{{ __('Starke Resonanz (geringe Dämpfung)') }}</option>
-                                    <option value="loose">{{ __('Prüfling löst sich während der Prüfung') }}</option>
+                                    <option value="normal">{{ __('Bleibt fest eingespannt') }}</option>
+                                    <option value="loose">{{ __('Löst sich während der Prüfung') }}</option>
                                 </select>
                             </div>
-                        </div>
+                        </fieldset>
 
                         <div class="sim__controls">
                             <button type="button" class="btn btn--primary" data-sim-action="start">{{ __('Start') }}</button>
@@ -109,7 +125,7 @@
                 </div>
             </div>
 
-            <p class="calc__note" style="margin-top:1.4rem; max-width: 80ch">{{ __('Vereinfachtes Lehrmodell mit einem Prüfaufbau aus Schwingerreger, Vorrichtung und einer dominanten Resonanz. Es zeigt das Prinzip der Regelung und ersetzt keine Prüfstandssoftware. Für echte Prüfungen beraten wir Sie gern.') }}</p>
+            <p class="calc__note" style="margin-top:1.4rem; max-width: 80ch">{{ __('Vereinfachtes Lehrmodell mit einem Prüfaufbau aus Schwingerreger, Vorrichtung und bis zu zwei einstellbaren Resonanzen. Es zeigt das Prinzip der Regelung und ersetzt keine Prüfstandssoftware. Für echte Prüfungen beraten wir Sie gern.') }}</p>
         </div>
     </div>
 @endsection

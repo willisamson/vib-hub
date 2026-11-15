@@ -35,9 +35,16 @@
     @include('partials.header')
 
     <main id="inhalt">
+        @if (session('status') && ! ($hideFlash ?? false))
+            <div class="flash container" role="status">
+                <x-glyph name="check" />
+                <span>{{ session('status') }}</span>
+            </div>
+        @endif
         @yield('content')
     </main>
 
     @include('partials.footer')
+    @include('partials.consent')
 </body>
 </html>

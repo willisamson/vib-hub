@@ -26,7 +26,7 @@
                     </section>
                 @endif
                 @if ($training->tr('body'))
-                    <div class="prose">{!! $training->tr('body') !!}</div>
+                    <div class="prose">{!! consent_embeds($training->tr('body')) !!}</div>
                 @endif
 
                 <section class="stack-m">

@@ -44,12 +44,19 @@ class Site
         'logo' => null,
         'logo_dark' => null,
         'favicon' => null,
+        'accounts_enabled' => true,
+        'contact_requires_account' => false,
+        'consent_version' => 1,
+        'consent_title' => 'Cookies und Datenschutz',
+        'consent_text' => 'Wir verwenden technisch notwendige Cookies, damit die Website und Ihr Kundenkonto funktionieren. Weitere Dienste wie Statistik oder externe Medien laden wir nur mit Ihrer Einwilligung. Sie können Ihre Auswahl jederzeit über „Cookie-Einstellungen“ im Seitenfuß ändern.',
+        'consent_stats_name' => null,
+        'consent_stats_snippet' => null,
     ];
 
     /** Texte, die im Admin zusätzlich auf Englisch (Schlüssel + "_en") gepflegt werden können. */
     public const TRANSLATABLE = [
         'tagline', 'meta_description', 'hero_kicker', 'hero_title', 'hero_text',
-        'footer_text', 'app_text', 'imprint', 'privacy',
+        'footer_text', 'app_text', 'imprint', 'privacy', 'consent_title', 'consent_text',
     ];
 
     public const DEFAULTS_EN = [
@@ -59,6 +66,8 @@ class Site
         'hero_title' => 'Understand vibration. Master resonance.',
         'hero_text' => 'Sine, random and shock to IEC 60068 – plus measurement, calculation and resonance elimination from a single source. We reveal what makes your product vibrate and make sure it holds.',
         'footer_text' => 'Engineering services for vibration testing, resonance analysis and dynamic design.',
+        'consent_title' => 'Cookies and privacy',
+        'consent_text' => 'We use strictly necessary cookies so that the website and your customer account work. Further services such as statistics or external media are only loaded with your consent. You can change your choice at any time via “Cookie settings” in the footer.',
         'app_text' => 'Calculate forces and strokes for vibration tests directly from the PSD profile – on your smartphone, offline, without ads and without data collection.',
     ];
 
@@ -108,6 +117,21 @@ class Site
         }
 
         return $value;
+    }
+
+    public function accountsEnabled(): bool
+    {
+        return (bool) $this->get('accounts_enabled', true);
+    }
+
+    public function contactRequiresAccount(): bool
+    {
+        return $this->accountsEnabled() && (bool) $this->get('contact_requires_account', false);
+    }
+
+    public function consentVersion(): int
+    {
+        return max(1, (int) $this->get('consent_version', 1));
     }
 
     public function name(): string

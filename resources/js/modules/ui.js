@@ -10,6 +10,25 @@ export function initHeader() {
     const toggle = header.querySelector('[data-nav-toggle]');
     const nav = document.querySelector('[data-nav]');
     if (!toggle || !nav) return;
+
+    // Passen die (im Admin pflegbaren) Menüpunkte nicht in eine Zeile, wird auch auf
+    // breiten Bildschirmen das aufklappbare Menü verwendet.
+    const inner = header.querySelector('.site-header__inner');
+    const brand = header.querySelector('.brand');
+    let measuring = false;
+    const fit = () => {
+        if (measuring) return;
+        measuring = true;
+        delete header.dataset.compact;
+        if (window.innerWidth > 1140) {
+            const needed = brand.offsetWidth + 32 + nav.scrollWidth;
+            if (needed > inner.clientWidth) header.dataset.compact = '';
+        }
+        measuring = false;
+    };
+    fit();
+    window.addEventListener('resize', () => requestAnimationFrame(fit));
+    document.fonts?.ready.then(fit);
     const set = (open) => {
         toggle.setAttribute('aria-expanded', String(open));
         nav.dataset.open = String(open);

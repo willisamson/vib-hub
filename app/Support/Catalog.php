@@ -81,6 +81,43 @@ class Catalog
         'erledigt' => 'Erledigt',
     ];
 
+    /** Status, wie ihn der Kunde in seinem Konto sieht. */
+    public const CUSTOMER_STATUSES = [
+        'neu' => 'Eingegangen',
+        'in_bearbeitung' => 'In Bearbeitung',
+        'angebot' => 'Angebot versendet',
+        'erledigt' => 'Erledigt',
+    ];
+
+    /** Bereiche, in denen Menüpunkte erscheinen. */
+    public const MENU_LOCATIONS = [
+        'header' => 'Hauptmenü (Kopfzeile)',
+        'footer' => 'Fußzeile – Übersicht',
+        'legal' => 'Fußzeile – Rechtliches',
+    ];
+
+    /** Seiten der Website, auf die ein Menüpunkt zeigen kann. */
+    public const MENU_ROUTES = [
+        'home' => 'Startseite',
+        'services.index' => 'Leistungen',
+        'calculators' => 'Berechnungen',
+        'simulator' => 'Regler-Simulator',
+        'app' => 'App-Seite',
+        'norms.index' => 'Normen',
+        'trainings.index' => 'Schulungen',
+        'contact' => 'Kontakt / Anfrage',
+        'account.dashboard' => 'Kundenkonto',
+        'account.register' => 'Kundenkonto – Registrierung',
+        'imprint' => 'Impressum',
+        'privacy' => 'Datenschutz',
+    ];
+
+    public const MENU_TYPES = [
+        'route' => 'Seite der Website',
+        'page' => 'Eigene Seite',
+        'url' => 'Freier Link',
+    ];
+
     public static function label(array $list, ?string $key): string
     {
         return __($list[$key] ?? (string) $key);

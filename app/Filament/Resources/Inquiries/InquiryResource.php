@@ -14,6 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -21,6 +22,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -86,8 +88,17 @@ class InquiryResource extends Resource
             Section::make('Bearbeitung')
                 ->columnSpanFull()
                 ->schema([
-                    Select::make('status')->label('Status')->options(Catalog::INQUIRY_STATUSES)->required(),
-                    Textarea::make('notes')->label('Interne Notizen')->rows(4),
+                    TextEntry::make('customer_info')
+                        ->label('Kundenkonto')
+                        ->state(fn (?Inquiry $record): string => $record?->customer
+                            ? $record->customer->name.' ('.$record->customer->email.') – sieht Status und Antwort unter „Mein Konto“'
+                            : 'Ohne Kundenkonto gestellt – Antwort bitte per E-Mail.'),
+                    Select::make('status')->label('Status')->options(Catalog::INQUIRY_STATUSES)->required()
+                        ->helperText('Kunden mit Konto sehen den Status in ihrem Konto.'),
+                    Textarea::make('reply')->label('Antwort an den Kunden')->rows(5)
+                        ->helperText('Erscheint im Kundenkonto bei dieser Anfrage. Nur sichtbar, wenn die Anfrage über ein Kundenkonto gestellt wurde.')
+                        ->visible(fn (?Inquiry $record): bool => (bool) $record?->customer_id),
+                    Textarea::make('notes')->label('Interne Notizen')->rows(4)->helperText('Nur im Admin sichtbar.'),
                 ]),
         ]);
     }
@@ -99,7 +110,10 @@ class InquiryResource extends Resource
             ->columns([
                 TextColumn::make('created_at')->label('Eingang')->dateTime('d.m.Y H:i')->sortable(),
                 TextColumn::make('name')->label('Name')->searchable()->weight(FontWeight::Bold)
-                    ->description(fn (Inquiry $record): ?string => $record->company),
+                    ->description(fn (Inquiry $record): ?string => $record->company)
+                    ->icon(fn (Inquiry $record) => $record->customer_id ? Heroicon::OutlinedUserCircle : null)
+                    ->iconColor('primary')
+                    ->tooltip(fn (Inquiry $record): ?string => $record->customer_id ? 'Kunde mit Konto' : null),
                 TextColumn::make('email')->label('E-Mail')->searchable()->copyable(),
                 TextColumn::make('topic')->label('Thema')->badge()->color('gray')
                     ->formatStateUsing(fn (?string $state): string => Catalog::label(Catalog::INQUIRY_TOPICS, $state)),
@@ -110,6 +124,8 @@ class InquiryResource extends Resource
             ->filters([
                 SelectFilter::make('status')->label('Status')->options(Catalog::INQUIRY_STATUSES),
                 SelectFilter::make('topic')->label('Thema')->options(Catalog::INQUIRY_TOPICS),
+                TernaryFilter::make('customer_id')->label('Kundenkonto')->nullable()
+                    ->trueLabel('Mit Kundenkonto')->falseLabel('Ohne Kundenkonto'),
             ])
             ->recordActions([
                 EditAction::make()->label('Öffnen'),

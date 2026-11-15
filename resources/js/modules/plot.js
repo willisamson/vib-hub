@@ -63,7 +63,7 @@ export function sizeCanvas(canvas) {
 
 /**
  * opts: { x: {min,max,log,label}, y: {min,max,log,label}, series: [{points, color, width, fill, dash}],
- *         bands: [{x0,x1,y0,y1,color}], vlines: [{x,color,label}], markers: [{x,y,color,label}] }
+ *         bands: [{x0,x1,y0,y1,color}], vlines: [{x,color,label,bottom}], markers: [{x,y,color,label}] }
  */
 export function drawPlot(canvas, opts) {
     const { ctx, w, h } = sizeCanvas(canvas);
@@ -141,8 +141,8 @@ export function drawPlot(canvas, opts) {
         if (l.label) {
             ctx.fillStyle = l.color;
             ctx.textAlign = px > pad.l + pw * 0.7 ? 'right' : 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText(l.label, px + (ctx.textAlign === 'left' ? 6 : -6), pad.t + 6);
+            ctx.textBaseline = l.bottom ? 'bottom' : 'top';
+            ctx.fillText(l.label, px + (ctx.textAlign === 'left' ? 6 : -6), l.bottom ? pad.t + ph - 6 : pad.t + 6);
         }
     }
 
