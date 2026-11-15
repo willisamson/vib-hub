@@ -15,11 +15,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(ContentSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Nur lokal einen Test-Admin anlegen. Auf dem Server legt
+        // setup-vibhub.sh den echten Admin an (make:filament-user).
+        if (app()->environment('local') && ! User::query()->where('email', 'admin@vib-hub.test')->exists()) {
+            User::factory()->create([
+                'name' => 'Admin',
+                'email' => 'admin@vib-hub.test',
+                'password' => 'password',
+            ]);
+        }
     }
 }

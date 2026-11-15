@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Filament\Resources\Users;
+
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Models\User;
+use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+
+    protected static string|UnitEnum|null $navigationGroup = 'System';
+
+    protected static ?int $navigationSort = 90;
+
+    protected static ?string $modelLabel = 'Admin-Benutzer';
+
+    protected static ?string $pluralModelLabel = 'Admin-Benutzer';
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
+            Section::make()
+                ->columnSpanFull()
+                ->columns(2)
+                ->schema([
+                    TextInput::make('name')->label('Name')->required()->maxLength(255),
+                    TextInput::make('email')->label('E-Mail')->email()->required()->unique(ignoreRecord: true),
+                    TextInput::make('password')
+                        ->label('Passwort')
+                        ->password()
+                        ->revealable()
+                        ->minLength(8)
+                        ->required(fn (string $operation): bool => $operation === 'create')
+                        ->dehydrated(fn (?string $state): bool => filled($state))
+                        ->helperText('Beim Bearbeiten leer lassen, um das Passwort nicht zu ändern.'),
+                ]),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')->label('Name')->searchable(),
+                TextColumn::make('email')->label('E-Mail')->searchable(),
+                TextColumn::make('created_at')->label('Angelegt')->date('d.m.Y'),
+            ])
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make()
+                    ->hidden(fn (User $record): bool => $record->is(auth()->user())),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
+        ];
+    }
+}
