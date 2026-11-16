@@ -17,8 +17,8 @@ class Menu
     protected array $cache = [];
 
     protected const FALLBACK = [
-        'header' => ['services.index' => 'Leistungen', 'calculators' => 'Berechnungen', 'simulator' => 'Simulator', 'app' => 'App', 'norms.index' => 'Normen', 'trainings.index' => 'Schulungen'],
-        'footer' => ['services.index' => 'Alle Leistungen', 'calculators' => 'Berechnungen', 'simulator' => 'Regler-Simulator', 'norms.index' => 'Normen', 'trainings.index' => 'Schulungen'],
+        'header' => ['services.index' => 'Leistungen', 'calculators' => 'Berechnungen', 'planner' => 'Auslegung', 'simulator' => 'Simulator', 'app' => 'App', 'norms.index' => 'Normen', 'trainings.index' => 'Schulungen'],
+        'footer' => ['services.index' => 'Alle Leistungen', 'calculators' => 'Berechnungen', 'simulator' => 'Regler-Simulator', 'planner' => 'Shaker-Auslegung', 'norms.index' => 'Normen', 'trainings.index' => 'Schulungen'],
         'legal' => ['imprint' => 'Impressum', 'privacy' => 'Datenschutz'],
     ];
 

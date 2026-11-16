@@ -30,5 +30,8 @@
                 </div>
             @endforeach
         </div>
+        @if (! empty($note))
+            <p style="margin-top:1rem; font-size:.75rem; color:rgb(100 116 139)">{!! $note !!}</p>
+        @endif
     </x-filament::section>
 </x-filament-widgets::widget>

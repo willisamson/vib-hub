@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\Visitors\VisitorBrowsers;
 use App\Filament\Widgets\Visitors\VisitorChart;
+use App\Filament\Widgets\Visitors\VisitorCountries;
 use App\Filament\Widgets\Visitors\VisitorDevices;
 use App\Filament\Widgets\Visitors\VisitorOverview;
 use App\Filament\Widgets\Visitors\VisitorPages;
@@ -64,6 +66,8 @@ class Visitors extends Dashboard
             VisitorChart::class,
             VisitorPages::class,
             VisitorSources::class,
+            VisitorCountries::class,
+            VisitorBrowsers::class,
             VisitorDevices::class,
         ];
     }

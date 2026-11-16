@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\PageView;
+use App\Support\GeoIp;
 use App\Support\Site;
 use Closure;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ use Throwable;
 
 /**
  * Zählt Seitenaufrufe für die Besucherstatistik im Admin – ohne Cookies und ohne die
- * IP-Adresse zu speichern. Eindeutige Besucher werden über einen Hash aus IP, Browser
+ * IP-Adresse zu speichern. Aus der IP wird nur das Land nachgeschlagen (lokale Datenbank). Eindeutige Besucher werden über einen Hash aus IP, Browser
  * und Datum erkannt, der sich täglich ändert und nicht zurückgerechnet werden kann.
  * Die Zählung läuft erst, nachdem die Antwort an den Browser gegangen ist.
  */
@@ -45,6 +46,9 @@ class TrackPageView
                 'locale' => $request->is('en', 'en/*') ? 'en' : 'de',
                 'referrer' => $this->referrer($request),
                 'device' => $this->device($ua),
+                'country' => GeoIp::country($request->ip()),
+                'browser' => $this->browser($ua),
+                'os' => $this->os($ua),
                 'visitor' => substr(hash_hmac('sha256', $request->ip().'|'.$ua.'|'.$day, (string) config('app.key')), 0, 16),
             ]);
 
@@ -107,6 +111,32 @@ class TrackPageView
         $host = preg_replace('/^www\./', '', strtolower($host));
 
         return $host === preg_replace('/^www\./', '', strtolower($request->getHost())) ? null : mb_substr($host, 0, 120);
+    }
+
+    protected function browser(string $ua): string
+    {
+        return match (true) {
+            (bool) preg_match('/Edg(A|iOS)?\//', $ua) => 'Edge',
+            (bool) preg_match('/OPR\/|Opera/', $ua) => 'Opera',
+            (bool) preg_match('/SamsungBrowser/', $ua) => 'Samsung Internet',
+            (bool) preg_match('/Firefox|FxiOS/', $ua) => 'Firefox',
+            (bool) preg_match('/Chrome|CriOS|Chromium/', $ua) => 'Chrome',
+            (bool) preg_match('/Safari/', $ua) => 'Safari',
+            default => 'Sonstige',
+        };
+    }
+
+    protected function os(string $ua): string
+    {
+        return match (true) {
+            (bool) preg_match('/iPhone|iPad|iPod/', $ua) => 'iOS / iPadOS',
+            (bool) preg_match('/Android/', $ua) => 'Android',
+            (bool) preg_match('/Windows/', $ua) => 'Windows',
+            (bool) preg_match('/CrOS/', $ua) => 'ChromeOS',
+            (bool) preg_match('/Mac OS X|Macintosh/', $ua) => 'macOS',
+            (bool) preg_match('/Linux/', $ua) => 'Linux',
+            default => 'Sonstige',
+        };
     }
 
     protected function device(string $ua): string

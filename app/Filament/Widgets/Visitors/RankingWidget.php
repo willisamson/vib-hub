@@ -22,11 +22,18 @@ abstract class RankingWidget extends Widget
      */
     abstract public function groups(VisitorStats $stats): array;
 
+    /** Optionaler Hinweis unter der Liste (HTML erlaubt, nur eigene Texte). */
+    public function note(): ?string
+    {
+        return null;
+    }
+
     protected function getViewData(): array
     {
         return [
             'heading' => $this->heading(),
             'groups' => $this->groups(VisitorStats::fromFilters($this->pageFilters)),
+            'note' => $this->note(),
         ];
     }
 }
