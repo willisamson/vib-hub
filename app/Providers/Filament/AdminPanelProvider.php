@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Notifications\TwoFactorCode;
 use App\Support\Site;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -12,6 +13,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -36,8 +38,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->profile()
-            // Zwei-Faktor-Anmeldung mit Authenticator-App (Pflicht für alle Admins, mit Wiederherstellungscodes)
+            // Zwei-Faktor-Anmeldung (Pflicht): Code per E-Mail oder kostenlose Authenticator-App
             ->multiFactorAuthentication([
+                EmailAuthentication::make()->codeExpiryMinutes(10)->codeNotification(TwoFactorCode::class),
                 AppAuthentication::make()->recoverable()->brandName('vib-hub'),
             ], isRequired: true)
             ->brandName('vib-hub Admin')
