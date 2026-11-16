@@ -6,7 +6,7 @@
 @section('content')
     @include('partials.page-head', [
         'title' => __('Schulungen'),
-        'lede' => __('Verständlich, praxisnah und mit Versuchen am Schwingerreger. Offene Termine oder als Inhouse-Schulung zugeschnitten auf Ihre Produkte.'),
+        'lede' => __('Verständlich, praxisnah und mit Live-Demos im Regler-Simulator. Offene Termine oder als Inhouse-Schulung zugeschnitten auf Ihre Produkte und Anlagen.'),
         'crumbs' => [__('Schulungen') => null],
     ])
 

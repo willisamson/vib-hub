@@ -46,7 +46,7 @@ class Settings extends Page
     /** Diese Schlüssel werden gespeichert (alles andere wird ignoriert). */
     protected const KEYS = [
         'company_name', 'tagline', 'meta_description', 'logo', 'logo_dark', 'favicon',
-        'email', 'notify_email', 'phone', 'address', 'linkedin',
+        'email', 'notify_email', 'partner_name', 'partner_email', 'phone', 'address', 'linkedin',
         'hero_kicker', 'hero_title', 'hero_text', 'stats',
         'footer_text', 'imprint', 'privacy',
         'app_name', 'app_url', 'app_text', 'app_image',
@@ -126,6 +126,14 @@ class Settings extends Page
                                         TextInput::make('phone')->label('Telefon')->tel(),
                                         TextInput::make('linkedin')->label('LinkedIn-URL')->url(),
                                         Textarea::make('address')->label('Anschrift')->rows(3)->columnSpanFull(),
+                                    ]),
+                                Section::make('Partner für Prüfanlagen')
+                                    ->description('Bei Anfragen zum Thema „Shaker-Prüfstand“ können Kunden der Weiterleitung an den Partner zustimmen. Mit E-Mail-Adresse geht die Anfrage dann automatisch an den Partner, sonst leiten Sie sie im Admin weiter.')
+                                    ->columns(2)
+                                    ->schema([
+                                        TextInput::make('partner_name')->label('Name des Partners')->placeholder('RMS Dynamic Test Systems'),
+                                        TextInput::make('partner_email')->label('E-Mail für Weiterleitungen')->email()
+                                            ->helperText('Leer = keine automatische Weiterleitung.'),
                                     ]),
                             ]),
                         Tab::make('Startseite')

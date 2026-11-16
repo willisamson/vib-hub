@@ -62,9 +62,9 @@
             <aside>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Prüfung nach :code', ['code' => $norm->code]) }}</h2>
-                        <p class="muted">{{ __('Wir prüfen nach dieser Norm oder leiten mit Ihnen die passende Prüfschärfe ab.') }}</p>
-                        <a class="btn btn--primary" style="width:100%" href="{{ lroute('contact', ['thema' => 'pruefung', 'bezug' => $norm->code]) }}">{{ __('Prüfung anfragen') }}</a>
+                        <h2 class="hd-3" style="font-size:1.35rem">{{ __(':code umsetzen', ['code' => $norm->code]) }}</h2>
+                        <p class="muted">{{ __('Wir helfen Ihnen, diese Norm umzusetzen – von der Prüfschärfe über Befestigung und Regler-Setup bis zur Frage, ob Ihre Anlage das Profil schafft.') }}</p>
+                        <a class="btn btn--primary" style="width:100%" href="{{ lroute('contact', ['thema' => 'pruefung', 'bezug' => $norm->code]) }}">{{ __('Beratung zu dieser Norm') }}</a>
                     </div>
                 </div>
                 @if ($related->isNotEmpty())

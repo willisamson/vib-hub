@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inquiry;
 use App\Support\Catalog;
+use App\Support\PartnerForwarder;
 use App\Support\Site;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ class ContactController extends Controller
             'preset' => [
                 'topic' => array_key_exists((string) $topic, Catalog::INQUIRY_TOPICS) ? $topic : null,
                 'reference' => mb_substr((string) $request->query('bezug', ''), 0, 200),
+                'message' => mb_substr((string) $request->query('text', ''), 0, 3000),
             ],
         ]);
     }
@@ -54,6 +56,7 @@ class ContactController extends Controller
             'reference' => ['nullable', 'string', 'max:200'],
             'message' => ['required', 'string', 'min:10', 'max:5000'],
             'privacy' => ['accepted'],
+            'forward' => ['nullable', 'boolean'],
         ], [
             'privacy.accepted' => __('Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.'),
             'message.min' => __('Bitte beschreiben Sie Ihr Anliegen in ein paar Worten.'),
@@ -64,7 +67,8 @@ class ContactController extends Controller
             'message' => __('Nachricht'),
         ]);
 
-        unset($data['privacy']);
+        unset($data['privacy'], $data['forward']);
+        $data['forward_consent'] = $data['topic'] === 'pruefstand' && $request->boolean('forward');
 
         if (app()->getLocale() === 'en') {
             $data['reference'] = trim('[EN] '.($data['reference'] ?? ''));
@@ -89,6 +93,10 @@ class ContactController extends Controller
             }
         }
 
+        if ($inquiry->forward_consent) {
+            PartnerForwarder::send($inquiry, $site);
+        }
+
         if ($customer) {
             return redirect()->to(lroute('account.inquiry', $inquiry))->with('status', __('Vielen Dank – Ihre Anfrage ist angekommen. Den Stand sehen Sie hier in Ihrem Konto.'));
         }
@@ -108,6 +116,7 @@ class ContactController extends Controller
             'E-Mail:  '.$inquiry->email,
             $inquiry->phone ? 'Telefon: '.$inquiry->phone : null,
             $inquiry->customer_id ? 'Kunde:   registriertes Kundenkonto (#'.$inquiry->customer_id.')' : null,
+            $inquiry->forward_consent ? 'Partner: Weiterleitung an '.app(Site::class)->partnerName().' erlaubt' : null,
             '',
             $inquiry->message,
             '',

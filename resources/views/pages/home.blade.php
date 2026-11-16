@@ -35,7 +35,7 @@
                 <h1 class="hd-display" id="hero-title">{{ $site->get('hero_title') }}</h1>
                 <p class="lede">{{ $site->get('hero_text') }}</p>
                 <div class="hero__actions">
-                    <a class="btn btn--primary" href="{{ lroute('contact', ['thema' => 'pruefung']) }}">{{ __('Prüfung anfragen') }}</a>
+                    <a class="btn btn--primary" href="{{ lroute('contact', ['thema' => 'pruefstand']) }}">{{ __('Beratung anfragen') }}</a>
                     <a class="btn" href="#resonanz">{{ __('Resonanz-Demo ausprobieren') }}</a>
                 </div>
             </div>
@@ -64,7 +64,7 @@
         <div class="container">
             <div class="section-head">
                 <h2 class="hd-2" id="tests-title">{{ __('Drei Signale. Eine Frage: Hält Ihr Produkt?') }}</h2>
-                <p class="lede">{{ __('Jede Umgebung hat ihre eigene Signatur. Wir wählen das passende Prüfverfahren, leiten die Schärfe aus Norm oder Feldmessung ab und dokumentieren jeden Lauf nachvollziehbar.') }}</p>
+                <p class="lede">{{ __('Jede Umgebung hat ihre eigene Signatur. Wir wählen mit Ihnen das passende Prüfverfahren, leiten die Schärfe aus Norm oder Feldmessung ab und richten Ihre Anlage so ein, dass jeder Lauf sauber regelt.') }}</p>
             </div>
             <div class="tests">
                 @foreach ($testRows as $type => $row)
@@ -116,7 +116,7 @@
         <div class="container">
             <div class="section-head">
                 <h2 class="hd-2" id="svc-title">{{ __('Vom Prüfstand bis zur Simulation') }}</h2>
-                <p class="lede">{{ __('Prüfung, Messung und Berechnung greifen bei uns ineinander. Das spart Schleifen: Was im Versuch auffällt, klären wir im Modell – und umgekehrt.') }}</p>
+                <p class="lede">{{ __('Planung, Messung und Berechnung greifen bei uns ineinander. Das spart Schleifen: Was am Prüfstand auffällt, klären wir im Modell – und umgekehrt.') }}</p>
             </div>
             <div class="svc-groups">
                 @foreach (\App\Support\Catalog::SERVICE_CATEGORIES as $key => $label)
@@ -137,6 +137,7 @@
                     </div>
                 @endforeach
             </div>
+            <p class="partner-note">{{ __('Für Neuanschaffungen arbeiten wir mit') }} <a class="link" href="https://rms-testsystems.de" target="_blank" rel="noopener">RMS Dynamic Test Systems</a> {{ __('zusammen – Schwingprüfanlagen aus Reinbek. Bestehende Anlagen anderer Hersteller optimieren wir genauso.') }}</p>
         </div>
     </section>
 
@@ -145,13 +146,14 @@
         <div class="container calc-teaser">
             <div>
                 <h2 class="hd-2" id="calc-title">{{ __('Rechnen, bevor es schwingt') }}</h2>
-                <p class="lede" style="margin-top:1.2rem">{{ __('Unsere Rechner nutzen wir selbst im Prüffeld. Sie stehen Ihnen frei zur Verfügung – ohne Anmeldung.') }}</p>
+                <p class="lede" style="margin-top:1.2rem">{{ __('Unsere Rechner nutzen wir selbst in jedem Projekt. Sie stehen Ihnen frei zur Verfügung – ohne Anmeldung.') }}</p>
                 <ul class="tool-list" style="margin-top:2rem">
                     <li><a href="{{ lroute('calculators') }}#sinus"><div><strong>{{ __('Sinus-Umrechner') }}</strong><span>{{ __('Weg, Geschwindigkeit, Beschleunigung und Übergangsfrequenz') }}</span></div><span class="mono">a = (2πf)²·x</span></a></li>
                     <li><a href="{{ lroute('calculators') }}#random"><div><strong>{{ __('Random: Grms aus PSD') }}</strong><span>{{ __('Effektivwert, Hub und Steigungen in dB/Oktave') }}</span></div><span class="mono">{{ __('√∫G(f) df') }}</span></a></li>
                     <li><a href="{{ lroute('calculators') }}#schock"><div><strong>{{ __('Schock') }}</strong><span>{{ __('Geschwindigkeitsänderung, Fallhöhe, Pulsform') }}</span></div><span class="mono">Δv = 2AD/π</span></a></li>
                     <li><a href="{{ lroute('calculators') }}#eigenfrequenz"><div><strong>{{ __('Eigenfrequenz') }}</strong><span>{{ __('Masse, Steifigkeit, statische Einfederung') }}</span></div><span class="mono">{{ __('f₀ = √(k/m)/2π') }}</span></a></li>
                     <li><a href="{{ lroute('calculators') }}#isolierung"><div><strong>{{ __('Schwingungsisolierung') }}</strong><span>{{ __('Übertragungsfaktor und Isolierwirkung') }}</span></div><span class="mono">{{ __('T(f/f₀, D)') }}</span></a></li>
+                    <li><a href="{{ lroute('planner') }}"><div><strong>{{ __('Shaker-Auslegung') }}</strong><span>{{ __('Welche Anlage passt zu Ihren Prüfprofilen?') }}</span></div><span class="mono">F = m·a</span></a></li>
                     <li><a href="{{ lroute('simulator') }}"><div><strong>{{ __('Regler-Simulator') }}</strong><span>{{ __('Sollkurve, Warn- und Abschaltgrenzen live erleben') }}</span></div><span class="mono">±3 / ±6 dB</span></a></li>
                     <li><a href="{{ lroute('calculators') }}#schwingstaerke"><div><strong>{{ __('Schwingstärke') }}</strong><span>{{ __('Zonenbewertung für Maschinen') }}</span></div><span class="mono">v<sub>eff</sub> in mm/s</span></a></li>
                 </ul>
@@ -196,7 +198,7 @@
         <div class="container">
             <div class="section-head">
                 <h2 class="hd-2" id="training-title">{{ __('Nächste Schulungstermine') }}</h2>
-                <p class="lede">{{ __('Grundlagen, Prüfnormen, Signalanalyse und Resonanzbeseitigung – mit Live-Versuchen am Schwingerreger. Alle Seminare gibt es auch als Inhouse-Schulung.') }}</p>
+                <p class="lede">{{ __('Grundlagen, Prüfnormen, Prüfstandsplanung, Signalanalyse und Resonanzbeseitigung – mit Live-Demos im Regler-Simulator. Alle Seminare gibt es auch als Inhouse-Schulung, auf Wunsch an Ihrer Anlage.') }}</p>
             </div>
             @if ($upcoming->isEmpty())
                 <div class="empty">{{ __('Gerade sind keine offenen Termine geplant.') }} <a class="link" href="{{ lroute('contact', ['thema' => 'schulung']) }}">{{ __('Fragen Sie eine Inhouse-Schulung an.') }}</a></div>
@@ -215,7 +217,7 @@
     <section class="section section--panel" aria-labelledby="norm-title">
         <div class="container">
             <div class="section-head">
-                <h2 class="hd-2" id="norm-title">{{ __('Normen, nach denen wir prüfen') }}</h2>
+                <h2 class="hd-2" id="norm-title">{{ __('Normen, die wir mit Ihnen umsetzen') }}</h2>
                 <p class="lede">{{ __('Von der Grundnorm DIN EN 60068 über Fahrzeug-, Bahn- und Luftfahrtnormen bis zur Bewertung von Maschinen und Bauwerken. Die Farbe zeigt die Signalart.') }}</p>
             </div>
             <div class="norm-index">

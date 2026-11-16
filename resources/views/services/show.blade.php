@@ -52,8 +52,8 @@
                 <div class="panel">
                     <div class="panel__body stack-m">
                         <h2 class="hd-3" style="font-size:1.35rem">{{ __('Projekt besprechen') }}</h2>
-                        <p class="muted">{{ __('Beschreiben Sie kurz Prüfling, Anforderung und Termin – wir melden uns mit einem Vorschlag.') }}</p>
-                        <a class="btn btn--primary" style="width:100%" href="{{ lroute('contact', ['thema' => $service->category === 'pruefung' ? 'pruefung' : ($service->demo === 'resonance' ? 'resonanz' : ($service->category === 'engineering' ? 'berechnung' : 'service')), 'bezug' => $service->tr('title')]) }}">{{ __('Anfrage zu dieser Leistung') }}</a>
+                        <p class="muted">{{ __('Beschreiben Sie kurz Ihre Aufgabe, Ihre Anlage und den Zeitrahmen – wir melden uns mit einem Vorschlag.') }}</p>
+                        <a class="btn btn--primary" style="width:100%" href="{{ lroute('contact', ['thema' => in_array($service->category, ['pruefung', 'pruefstand'], true) ? $service->category : ($service->demo === 'resonance' ? 'resonanz' : ($service->category === 'engineering' ? 'berechnung' : 'service')), 'bezug' => $service->tr('title')]) }}">{{ __('Anfrage zu dieser Leistung') }}</a>
                     </div>
                 </div>
                 @if ($related->isNotEmpty())

@@ -24,6 +24,7 @@ $pages = function (): void {
 
     Route::get('/berechnungen', [SiteController::class, 'calculators'])->name('calculators');
     Route::get('/simulator', [SiteController::class, 'simulator'])->name('simulator');
+    Route::get('/shaker-auslegung', [SiteController::class, 'planner'])->name('planner');
     Route::get('/app', [SiteController::class, 'app'])->name('app');
 
     Route::get('/kontakt', [ContactController::class, 'show'])->name('contact');

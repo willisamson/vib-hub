@@ -11,12 +11,15 @@ class Inquiry extends Model
     protected $fillable = [
         'name', 'company', 'email', 'phone', 'topic', 'reference', 'message',
         'status', 'notes', 'ip', 'customer_id', 'reply', 'replied_at',
+        'forward_consent', 'forwarded_to', 'forwarded_at',
     ];
 
     protected function casts(): array
     {
         return [
             'replied_at' => 'datetime',
+            'forward_consent' => 'boolean',
+            'forwarded_at' => 'datetime',
         ];
     }
 

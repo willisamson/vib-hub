@@ -6,7 +6,7 @@
 @section('content')
     @include('partials.page-head', [
         'title' => __('Berechnungen'),
-        'lede' => __('Die Rechner, die wir täglich im Prüffeld nutzen. Alle Ergebnisse werden direkt in Ihrem Browser berechnet – nichts wird übertragen. Dezimalzahlen dürfen mit Komma oder Punkt eingegeben werden.'),
+        'lede' => __('Die Rechner, die wir in unseren Projekten täglich nutzen. Alle Ergebnisse werden direkt in Ihrem Browser berechnet – nichts wird übertragen. Dezimalzahlen dürfen mit Komma oder Punkt eingegeben werden.'),
         'crumbs' => [__('Berechnungen') => null],
     ])
 
@@ -22,6 +22,13 @@
             </nav>
 
             <div class="calc-stack">
+                <a class="sim-teaser" href="{{ lroute('planner') }}">
+                    <span class="sim__lamp" aria-hidden="true" style="background: var(--random)"></span>
+                    <div>
+                        <strong>{{ __('Shaker-Auslegung') }}</strong>
+                        <span>{{ __('Welche Anlage passt? Kraft, Hub und Geschwindigkeit aus Sinus, Random und Schock – mit Beispielauslegung auf der RMS-Serie.') }}</span>
+                    </div>
+                </a>
                 <a class="sim-teaser" href="{{ lroute('simulator') }}">
                     <span class="sim__lamp" aria-hidden="true"></span>
                     <div>

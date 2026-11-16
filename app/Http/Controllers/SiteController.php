@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Norm;
 use App\Models\Page;
 use App\Models\Service;
+use App\Models\ShakerModel;
 use App\Models\Training;
 use App\Support\Catalog;
 use App\Support\Site;
@@ -104,6 +105,13 @@ class SiteController extends Controller
     public function simulator(): View
     {
         return view('pages.simulator');
+    }
+
+    public function planner(): View
+    {
+        return view('pages.planner', [
+            'models' => ShakerModel::query()->active()->get()->map->toPlanner()->values(),
+        ]);
     }
 
     public function app(Site $site): View

@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Training;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use App\Support\ContentPatch;
 use App\Support\NormLibrary;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,9 @@ class ContentSeeder extends Seeder
         $this->services();
         $this->trainings();
         $this->norms();
+
+        // Neuausrichtung: Beratung und Prüfstandsaufbau statt eigener Prüfungen
+        ContentPatch::apply('content-beratung');
     }
 
     protected function services(): void

@@ -11,6 +11,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -34,6 +35,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->profile()
+            // Zwei-Faktor-Anmeldung mit Authenticator-App (Pflicht für alle Admins, mit Wiederherstellungscodes)
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable()->brandName('vib-hub'),
+            ], isRequired: true)
             ->brandName('vib-hub Admin')
             ->brandLogo(fn (): string => app(Site::class)->logoUrl())
             ->darkModeBrandLogo(fn (): string => app(Site::class)->logoOnDarkUrl())

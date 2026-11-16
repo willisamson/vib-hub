@@ -50,6 +50,9 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Cookie-Hinweis | `resources/views/partials/consent.blade.php`, `resources/js/modules/consent.js` · Texte/Statistik-Code: Website & Logo → Cookies |
 | Besucherstatistik | Admin → **Website → Besucher** (`app/Filament/Pages/Visitors.php`, Zählung: `app/Http/Middleware/TrackPageView.php`) · ein/aus: Website & Logo → Cookies |
 | Admin-Anmeldung | `app/Filament/Pages/Auth/Login.php`, Stil: `resources/views/filament/auth/login-brand.blade.php` (Logo aus Website & Logo) |
+| Zwei-Faktor-Anmeldung | Pflicht für alle Admins (Authenticator-App + Wiederherstellungscodes), verwalten unter Profil (oben rechts) · Notfall: `php artisan vibhub:2fa-reset admin@…` |
+| Shaker-Auslegung | `/shaker-auslegung` (`resources/js/modules/planner.js`) · Modelle: Admin → **Inhalte → Shaker-Modelle** · Weiterleitung an Partner: Website & Logo → Kontakt |
+| Datensicherung (Server) | `server/backup-vibhub.sh` – einmal `bash server/backup-vibhub.sh install`, dann täglich 3:17 Uhr nach `/var/backups/vibhub` (14 Tage + 8 Wochen) |
 | Normen-Anforderungen | Admin → **Inhalte → Normen** → Abschnitt „Anforderungen“ · Bibliothek: `database/data/norm-library.php`, einspielen mit `php artisan vibhub:normen` (`--force` überschreibt Admin-Änderungen) |
 | Einblenden beim Scrollen | `resources/js/modules/reveal.js` (respektiert „Bewegung reduzieren“) |
 

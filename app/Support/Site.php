@@ -18,23 +18,25 @@ class Site
 
     public const DEFAULTS = [
         'company_name' => 'vib-hub',
-        'tagline' => 'Schwingungsprüfung, Analyse und Resonanzbeseitigung',
-        'meta_description' => 'vib-hub – Schwingungsprüfung (Sinus, Random, Schock) nach DIN EN 60068, Resonanzbeseitigung, Berechnungen, Service und Schulungen rund um die Schwingungstechnik.',
+        'tagline' => 'Prüfstandsplanung, Beratung und Resonanzbeseitigung',
+        'meta_description' => 'vib-hub – Shaker-Prüfstände resonanzfrei planen und aufbauen, Beratung zu Sinus-, Random- und Schockprüfungen nach DIN EN 60068, Resonanzbeseitigung, Berechnungen und Schulungen.',
         'email' => 'info@vib-hub.com',
         'notify_email' => null,
+        'partner_name' => 'RMS Dynamic Test Systems',
+        'partner_email' => null,
         'phone' => null,
         'address' => null,
         'linkedin' => null,
-        'hero_kicker' => 'Labor und Engineering für Schwingungstechnik',
+        'hero_kicker' => 'Beratung und Engineering für Schwingungstechnik',
         'hero_title' => 'Schwingungen verstehen. Resonanzen beherrschen.',
-        'hero_text' => 'Sinus, Random und Schock nach DIN EN 60068 – dazu Messung, Berechnung und Resonanzbeseitigung aus einer Hand. Wir machen sichtbar, was Ihr Produkt zum Schwingen bringt, und sorgen dafür, dass es hält.',
+        'hero_text' => 'Wir planen Schwingprüfanlagen von Grund auf und bauen sie bei Ihnen resonanzfrei auf – von der Auslegung über Fundament und Vorrichtungen bis zur Abnahme. Dazu Beratung zu Sinus, Random und Schock, Messung, Berechnung und Resonanzbeseitigung.',
         'stats' => [
-            ['value' => '20', 'suffix' => '–2000 Hz', 'label' => 'Typischer Prüffrequenzbereich'],
-            ['value' => '3', 'suffix' => ' Achsen', 'label' => 'Prüfung in X, Y und Z'],
-            ['value' => '30', 'suffix' => '+ Normen', 'label' => 'DIN, EN, ISO, IEC, MIL, VDI'],
+            ['value' => '1', 'suffix' => ' Ansprechpartner', 'label' => 'Von der Auslegung bis zur Abnahme'],
+            ['value' => '3', 'suffix' => ' Achsen', 'label' => 'Aufbau für X, Y und Z mit Gleittisch'],
+            ['value' => '40', 'suffix' => '+ Normen', 'label' => 'DIN, EN, ISO, IEC, MIL, VDI'],
             ['value' => '24', 'suffix' => ' h', 'label' => 'Rückmeldung auf Anfragen'],
         ],
-        'footer_text' => 'Ingenieurdienstleistungen für Schwingungsprüfung, Resonanzanalyse und dynamische Auslegung.',
+        'footer_text' => 'Ingenieurdienstleistungen für Prüfstandsplanung, Prüfberatung, Resonanzanalyse und dynamische Auslegung.',
         'imprint' => null,
         'privacy' => null,
         'app_name' => 'PSD Profil Rechner',
@@ -62,12 +64,12 @@ class Site
     ];
 
     public const DEFAULTS_EN = [
-        'tagline' => 'Vibration testing, analysis and resonance elimination',
-        'meta_description' => 'vib-hub – vibration testing (sine, random, shock) to IEC 60068, resonance elimination, calculations, field service and training in vibration engineering.',
-        'hero_kicker' => 'Laboratory and engineering for vibration technology',
+        'tagline' => 'Test system planning, consulting and resonance elimination',
+        'meta_description' => 'vib-hub – planning and setting up resonance-free shaker test systems, consulting on sine, random and shock testing to IEC 60068, resonance elimination, calculations and training.',
+        'hero_kicker' => 'Consulting and engineering for vibration technology',
         'hero_title' => 'Understand vibration. Master resonance.',
-        'hero_text' => 'Sine, random and shock to IEC 60068 – plus measurement, calculation and resonance elimination from a single source. We reveal what makes your product vibrate and make sure it holds.',
-        'footer_text' => 'Engineering services for vibration testing, resonance analysis and dynamic design.',
+        'hero_text' => 'We plan vibration test systems from the ground up and set them up resonance-free at your site – from sizing through foundation and fixtures to acceptance. Plus consulting on sine, random and shock, measurement, calculation and resonance elimination.',
+        'footer_text' => 'Engineering services for test system planning, test consulting, resonance analysis and dynamic design.',
         'consent_title' => 'Cookies and privacy',
         'consent_text' => 'We use strictly necessary cookies so that the website and your customer account work. Further services such as statistics or external media are only loaded with your consent. You can change your choice at any time via “Cookie settings” in the footer.',
         'app_text' => 'Calculate forces and strokes for vibration tests directly from the PSD profile – on your smartphone, offline, without ads and without data collection.',
@@ -144,6 +146,12 @@ class Site
     public function consentVersion(): int
     {
         return max(1, (int) $this->get('consent_version', 1));
+    }
+
+    /** Partner für Prüfanlagen (Weiterleitung von Anfragen mit Zustimmung). */
+    public function partnerName(): string
+    {
+        return (string) ($this->get('partner_name') ?: 'RMS Dynamic Test Systems');
     }
 
     public function name(): string

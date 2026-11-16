@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('title', __('Kontakt & Anfrage'))
-@section('description', __('Anfrage zu Schwingungsprüfung, Resonanzbeseitigung, Berechnung, Service oder Schulung stellen.'))
+@section('description', __('Anfrage zu Prüfstandsplanung, Prüfberatung, Resonanzbeseitigung, Berechnung, Service oder Schulung stellen.'))
 
 @section('content')
     @include('partials.page-head', [
         'title' => __('Anfrage stellen'),
-        'lede' => __('Je konkreter, desto schneller: Prüfling, Abmessungen und Masse, Norm oder Spezifikation, gewünschter Termin. Messdaten oder Zeichnungen schicken wir Ihnen gern per Upload-Link nach.'),
+        'lede' => __('Je konkreter, desto schneller: Aufgabe, Prüfling, Norm oder Spezifikation, vorhandene oder geplante Anlage, gewünschter Zeitraum. Für Messdaten oder Zeichnungen schicken wir Ihnen gern einen Upload-Link.'),
         'crumbs' => [__('Kontakt') => null],
     ])
 
@@ -88,9 +88,16 @@
                             </div>
                             <div class="field full">
                                 <label for="c-msg">{{ __('Ihr Anliegen *') }}</label>
-                                <textarea class="textarea" id="c-msg" name="message" rows="7" required @error('message') aria-invalid="true" aria-describedby="e-msg" @enderror placeholder="{{ __('Was soll geprüft, gemessen oder berechnet werden?') }}">{{ old('message') }}</textarea>
+                                <textarea class="textarea" id="c-msg" name="message" rows="7" required @error('message') aria-invalid="true" aria-describedby="e-msg" @enderror placeholder="{{ __('Was soll geplant, geprüft, gemessen oder berechnet werden?') }}">{{ old('message', $preset['message'] ?? '') }}</textarea>
                                 @error('message')<span class="error-text" id="e-msg">{{ $message }}</span>@enderror
                             </div>
+                        </div>
+
+                        <div class="field contact-forward" data-show-for-topic="pruefstand" @if (old('topic', $preset['topic'] ?? 'pruefung') !== 'pruefstand') hidden @endif>
+                            <label style="display:flex; gap:.7rem; align-items:flex-start; font-weight:400">
+                                <input type="checkbox" name="forward" value="1" @checked(old('forward', true)) style="margin-top:.3rem; width:18px; height:18px; accent-color: var(--sine)">
+                                <span>{{ __('Ich bin einverstanden, dass vib-hub meine Anfrage für ein Angebot zur Anlage an :partner weiterleitet.', ['partner' => $site->partnerName()]) }}</span>
+                            </label>
                         </div>
 
                         <div class="hp" aria-hidden="true">
@@ -133,12 +140,12 @@
                 </div>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Das hilft uns bei Prüfanfragen') }}</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Das hilft uns bei Ihrer Anfrage') }}</h2>
                         <ul class="checklist">
-                            <li><x-glyph name="check" /><span>{{ __('Masse und Abmessungen des Prüflings') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Prüfling: Masse, Abmessungen, Befestigung') }}</span></li>
                             <li><x-glyph name="check" /><span>{{ __('Norm, Prüfschärfe oder Kundenspezifikation') }}</span></li>
-                            <li><x-glyph name="check" /><span>{{ __('Achsen, Betriebszustand während der Prüfung') }}</span></li>
-                            <li><x-glyph name="check" /><span>{{ __('Wunschtermin und Anzahl der Prüflinge') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Vorhandene Anlage (Hersteller, Kraft, Hub) oder geplante Neuanschaffung') }}</span></li>
+                            <li><x-glyph name="check" /><span>{{ __('Aufstellort und gewünschter Zeitraum') }}</span></li>
                         </ul>
                     </div>
                 </div>

@@ -8,7 +8,8 @@ namespace App\Support;
 class Catalog
 {
     public const SERVICE_CATEGORIES = [
-        'pruefung' => 'Prüfung',
+        'pruefstand' => 'Prüfstand & Anlagen',
+        'pruefung' => 'Prüfberatung',
         'analyse' => 'Analyse & Messung',
         'engineering' => 'Berechnung & Engineering',
         'service' => 'Service & Beratung',
@@ -66,7 +67,8 @@ class Catalog
     ];
 
     public const INQUIRY_TOPICS = [
-        'pruefung' => 'Prüfung (Sinus / Random / Schock)',
+        'pruefstand' => 'Shaker-Prüfstand planen / aufbauen',
+        'pruefung' => 'Prüfberatung (Sinus / Random / Schock)',
         'resonanz' => 'Resonanzbeseitigung',
         'berechnung' => 'Berechnung / Simulation',
         'service' => 'Service & Messung vor Ort',
@@ -102,6 +104,7 @@ class Catalog
         'services.index' => 'Leistungen',
         'calculators' => 'Berechnungen',
         'simulator' => 'Regler-Simulator',
+        'planner' => 'Shaker-Auslegung',
         'app' => 'App-Seite',
         'norms.index' => 'Normen',
         'trainings.index' => 'Schulungen',

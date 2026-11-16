@@ -84,3 +84,13 @@ export function initNormFilter() {
     search?.addEventListener('input', apply);
     apply();
 }
+
+/** Felder nur für ein bestimmtes Anfragethema einblenden (z. B. Weiterleitung an den Anlagenpartner). */
+export function initTopicToggle() {
+    const select = document.querySelector('select[name="topic"]');
+    if (!select) return;
+    const boxes = document.querySelectorAll('[data-show-for-topic]');
+    const update = () => boxes.forEach((el) => { el.hidden = el.dataset.showForTopic !== select.value; });
+    select.addEventListener('change', update);
+    update();
+}

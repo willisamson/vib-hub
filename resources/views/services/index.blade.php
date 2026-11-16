@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('title', __('Leistungen'))
-@section('description', __('Schwingungsprüfung (Sinus, Random, Schock), Modalanalyse, FEM-Berechnung, Resonanzbeseitigung, Messungen vor Ort und Schulungen.'))
+@section('description', __('Shaker-Prüfstände planen und resonanzfrei aufbauen, Prüfberatung (Sinus, Random, Schock), Modalanalyse, FEM-Berechnung, Resonanzbeseitigung, Messungen vor Ort und Schulungen.'))
 
 @section('content')
     @include('partials.page-head', [
         'title' => __('Leistungen'),
-        'lede' => __('Prüfen, messen, berechnen und beheben: Wir begleiten Sie von der Spezifikation bis zum Nachweis – oder steigen genau dort ein, wo es gerade hakt.'),
+        'lede' => __('Planen, aufbauen, messen, berechnen und beheben: Wir begleiten Sie von der Spezifikation bis zum Nachweis – oder steigen genau dort ein, wo es gerade hakt.'),
         'crumbs' => [__('Leistungen') => null],
     ])
 

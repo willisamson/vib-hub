@@ -5,6 +5,11 @@ namespace App\Filament\Resources\Inquiries;
 use App\Filament\Resources\Inquiries\Pages\EditInquiry;
 use App\Filament\Resources\Inquiries\Pages\ListInquiries;
 use App\Models\Inquiry;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Notifications\Notification;
+use Filament\Actions\Action;
+use App\Support\Site;
+use App\Support\PartnerForwarder;
 use App\Support\Catalog;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -93,6 +98,14 @@ class InquiryResource extends Resource
                         ->state(fn (?Inquiry $record): string => $record?->customer
                             ? $record->customer->name.' ('.$record->customer->email.') – sieht Status und Antwort unter „Mein Konto“'
                             : 'Ohne Kundenkonto gestellt – Antwort bitte per E-Mail.'),
+                    TextEntry::make('forward_info')
+                        ->label('Weiterleitung an Anlagenpartner')
+                        ->state(fn (?Inquiry $record): string => match (true) {
+                            ! $record?->forward_consent => 'Keine Zustimmung – nicht weiterleiten.',
+                            (bool) $record->forwarded_at => 'Weitergeleitet an '.$record->forwarded_to.' am '.$record->forwarded_at->format('d.m.Y H:i').'.',
+                            default => 'Kunde hat zugestimmt – noch nicht weitergeleitet (Aktion „An Partner weiterleiten“ in der Liste).',
+                        })
+                        ->visible(fn (?Inquiry $record): bool => $record?->topic === 'pruefstand'),
                     Select::make('status')->label('Status')->options(Catalog::INQUIRY_STATUSES)->required()
                         ->helperText('Kunden mit Konto sehen den Status in ihrem Konto.'),
                     Textarea::make('reply')->label('Antwort an den Kunden')->rows(5)
@@ -117,6 +130,11 @@ class InquiryResource extends Resource
                 TextColumn::make('email')->label('E-Mail')->searchable()->copyable(),
                 TextColumn::make('topic')->label('Thema')->badge()->color('gray')
                     ->formatStateUsing(fn (?string $state): string => Catalog::label(Catalog::INQUIRY_TOPICS, $state)),
+                IconColumn::make('forwarded_at')->label('Partner')
+                    ->state(fn (Inquiry $record): ?string => $record->forward_consent ? ($record->forwarded_at ? 'sent' : 'open') : null)
+                    ->icon(fn (?string $state) => match ($state) { 'sent' => Heroicon::OutlinedCheckCircle, 'open' => Heroicon::OutlinedPaperAirplane, default => null })
+                    ->color(fn (?string $state): string => $state === 'sent' ? 'success' : 'warning')
+                    ->tooltip(fn (Inquiry $record): ?string => $record->forward_consent ? ($record->forwarded_at ? 'An Partner weitergeleitet' : 'Weiterleitung erlaubt, noch offen') : null),
                 TextColumn::make('status')->label('Status')->badge()
                     ->color(fn (?string $state): string => static::statusColor($state))
                     ->formatStateUsing(fn (?string $state): string => Catalog::label(Catalog::INQUIRY_STATUSES, $state)),
@@ -128,6 +146,22 @@ class InquiryResource extends Resource
                     ->trueLabel('Mit Kundenkonto')->falseLabel('Ohne Kundenkonto'),
             ])
             ->recordActions([
+                Action::make('forward')
+                    ->label('An Partner weiterleiten')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
+                    ->color('primary')
+                    ->visible(fn (Inquiry $record): bool => $record->forward_consent && ! $record->forwarded_at)
+                    ->schema([
+                        TextInput::make('to')->label('E-Mail des Partners')->email()->required()
+                            ->default(fn (): ?string => app(Site::class)->get('partner_email')),
+                    ])
+                    ->action(function (Inquiry $record, array $data): void {
+                        $ok = PartnerForwarder::send($record, app(Site::class), $data['to']);
+                        Notification::make()
+                            ->title($ok ? 'Anfrage weitergeleitet' : 'Weiterleitung fehlgeschlagen – E-Mail-Einstellungen prüfen')
+                            ->{$ok ? 'success' : 'danger'}()
+                            ->send();
+                    }),
                 EditAction::make()->label('Öffnen'),
                 DeleteAction::make(),
             ])
