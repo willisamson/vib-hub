@@ -42,12 +42,15 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Design | `resources/css/app.css` (Farben/Schriften oben in `:root`) |
 | Oszilloskop, Resonanz-Demo, Rechner | `resources/js/modules/` (`vibmath.js` = alle Formeln) |
 | Logo-Dateien | `public/images/` |
-| Regler-Simulator (Sinus/Random/Schock) | `resources/js/modules/sim.js`, Seite `/simulator` |
+| Regler-Simulator (Sinus/Random/Schock/Sinus auf Rauschen) | `resources/js/modules/sim.js`, Seite `/simulator` |
 | Englische Website (`/en/...`) | Texte: `lang/en.json` · Inhalte: Admin, Abschnitt „English (/en)“ · Startseite: Admin → Website & Logo → English |
 | Menüs (Kopf- und Fußzeile) | Admin → **Website → Menüs** (`app/Models/MenuItem.php`, `app/Support/Menu.php`) |
 | Eigene Seiten (`/seite/...`) | Admin → **Website → Eigene Seiten** (`app/Models/Page.php`, View `pages/page`) |
 | Kundenkonto (`/konto`) | `app/Http/Controllers/Account/`, Views `resources/views/account/`, Guard `customer` in `config/auth.php` · Admin → **Kunden → Kunden** · ein/aus: Website & Logo → Kundenkonto |
 | Cookie-Hinweis | `resources/views/partials/consent.blade.php`, `resources/js/modules/consent.js` · Texte/Statistik-Code: Website & Logo → Cookies |
+| Besucherstatistik | Admin → **Website → Besucher** (`app/Filament/Pages/Visitors.php`, Zählung: `app/Http/Middleware/TrackPageView.php`) · ein/aus: Website & Logo → Cookies |
+| Admin-Anmeldung | `app/Filament/Pages/Auth/Login.php`, `resources/views/filament/auth/login-brand.blade.php` (Logo aus Website & Logo) |
+| Normen-Anforderungen | Admin → **Inhalte → Normen** → Abschnitt „Anforderungen“ · Bibliothek: `database/data/norm-library.php`, einspielen mit `php artisan vibhub:normen` (`--force` überschreibt Admin-Änderungen) |
 | Einblenden beim Scrollen | `resources/js/modules/reveal.js` (respektiert „Bewegung reduzieren“) |
 
 ### Hinweise
@@ -55,6 +58,7 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 - **Kunden** liegen in einer eigenen Tabelle `customers` und haben keinen Zugang zum Admin.
 - **Passwort vergessen** verschickt eine E-Mail – dafür muss in der `.env` ein Mailserver eingetragen sein (`MAIL_MAILER=smtp`, `MAIL_HOST`, …). Ohne Mailserver landet die Mail nur im Log.
 - **Cookie-Version** (Website & Logo → Cookies) erhöhen, wenn ein neuer Dienst dazukommt – dann werden alle Besucher erneut gefragt.
+- **Besucherstatistik** zählt ohne Cookies und ohne IP-Adressen (täglich wechselnder Hash), ignoriert Bots, „Do Not Track“ und angemeldete Admins. Einträge älter als 400 Tage werden automatisch gelöscht.
 - Eingebettete Videos/Karten (iframes) in Seiten und Leistungen laden erst nach Zustimmung zu „Externe Medien“.
 
 ## Rechner (vibmath.js)

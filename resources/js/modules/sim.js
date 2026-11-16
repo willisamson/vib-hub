@@ -246,8 +246,9 @@ export function initSimulator(root) {
     /* ================================================================ RANDOM */
 
     const Random = {
+        profileKey: () => sel('profile'),
         create() {
-            const profile = resolveProfile(PSD_PRESETS[sel('profile')].rows);
+            const profile = resolveProfile(PSD_PRESETS[this.profileKey()].rows);
             const lines = logspace(profile[0].f, profile[profile.length - 1].f, 160);
             const p = plant(resonances());
             const levels = [-9, -6, -3, 0];
@@ -303,7 +304,12 @@ export function initSimulator(root) {
             const armed = s.levelLoops > 4 || s.changed;
             // Abschaltung erst, wenn mehrere Linien (≥ 3) außerhalb der Abschaltgrenze liegen
             const errForCheck = outAbort >= 3 ? worst : Math.sign(worst) * Math.min(Math.abs(worst), s.abort - 0.01);
-            const res = checkLimits(errForCheck, s.warn, s.abort, t(`bei ${fmt(worstF, 3)} Hz`, `at ${fmt(worstF, 3)} Hz`), armed);
+            let chk = { err: errForCheck, warn: s.warn, abort: s.abort, where: t(`bei ${fmt(worstF, 3)} Hz`, `at ${fmt(worstF, 3)} Hz`) };
+            // Sinus auf Rauschen: die kritischere Abweichung (Rauschen oder Ton) entscheidet
+            const extra = this.extraCheck?.(s);
+            const severity = (c) => (Math.abs(c.err) > c.abort ? 2 : 0) + Math.abs(c.err) / c.warn;
+            if (extra && severity(extra) > severity(chk)) chk = extra;
+            const res = checkLimits(chk.err, chk.warn, chk.abort, chk.where, armed);
             if (res === 'abort') return 'abort';
 
             // Pegel stufenweise erhöhen
@@ -323,7 +329,7 @@ export function initSimulator(root) {
             return Math.sqrt(area);
         },
         draw(s) {
-            const profile = s ? s.profile : resolveProfile(PSD_PRESETS[sel('profile')].rows);
+            const profile = s ? s.profile : resolveProfile(PSD_PRESETS[this.profileKey()].rows);
             const lines = s ? s.lines : logspace(profile[0].f, profile[profile.length - 1].f, 160);
             const lvl = s ? Math.pow(10, s.levels[s.levelIdx] / 10) : 1;
             const warn = s ? s.warn : val('warn'), abort = s ? s.abort : val('abort');
@@ -340,13 +346,14 @@ export function initSimulator(root) {
                     { points: dem.map(sc(-warn)), color: cssVar('--shock', '#b45f00'), width: 1.2, dash: [3, 4] },
                     { points: dem, color: cssVar('--strong', '#0b1a26'), width: 1.6 },
                     ...(s && s.avg ? [{ points: lines.map((f, i) => [f, s.avg[i]]), color: cssVar('--random', '#6d3fe0'), width: 1.8 }] : []),
+                    ...(this.extraSeries ? this.extraSeries(s, lines, Math.min(...ys) / 60, Math.max(...ys) * 12) : []),
                 ],
                 vlines: resoLines(lines[0], lines[lines.length - 1]),
             });
         },
         readouts(s) {
             if (!s) {
-                const profile = resolveProfile(PSD_PRESETS[sel('profile')].rows);
+                const profile = resolveProfile(PSD_PRESETS[this.profileKey()].rows);
                 const lines = logspace(profile[0].f, profile[profile.length - 1].f, 400);
                 let area = 0;
                 for (let i = 0; i < lines.length - 1; i++) area += 0.5 * (psdAt(profile, lines[i]) + psdAt(profile, lines[i + 1])) * (lines[i + 1] - lines[i]);
@@ -540,7 +547,115 @@ export function initSimulator(root) {
         },
     };
 
-    const MODES = { sine: Sine, random: Random, shock: Shock };
+    /* ==================================================== SINUS AUF RAUSCHEN */
+
+    // Random-Regelung wie oben, zusätzlich bis zu drei Sinustöne (fest oder gewobbelt),
+    // die der Regler getrennt vom Rauschen nachführt.
+    const SoR = Object.create(Random);
+    Object.assign(SoR, {
+        profileKey: () => root.querySelector('[data-sim-setup="sor"] [name="sor_profile"]')?.value || 'navmat',
+        readTones() {
+            const tones = [];
+            root.querySelectorAll('[data-sim-setup="sor"] [data-tone]').forEach((row, i) => {
+                if (!row.querySelector('[name="on"]').checked) return;
+                const n = (name, fb) => { const v = num(row.querySelector(`[name="${name}"]`).value); return Number.isFinite(v) && v > 0 ? v : fb; };
+                const f1 = Math.min(5000, Math.max(5, n('f1', 100)));
+                const f2 = Math.min(5000, Math.max(5, n('f2', f1)));
+                tones.push({ id: `T${i + 1}`, f1: Math.min(f1, f2), f2: Math.max(f1, f2), amp: Math.min(50, n('amp', 1)), rate: Math.min(10, n('rate', 1)) });
+            });
+            return tones;
+        },
+        create() {
+            const s = Random.create.call(this);
+            s.toneWarn = val('toneWarn');
+            s.toneAbort = val('toneAbort');
+            s.tones = this.readTones().map((tn) => {
+                const f = tn.f1;
+                return { ...tn, f, dir: 1, meas: 0, err: 0, worst: 0, drive: tn.amp / (gain(s.plant, f) * Math.max(0.5, 1 + 0.1 * gauss())) };
+            });
+            return s;
+        },
+        levelAmp: (s) => Math.pow(10, s.levels[s.levelIdx] / 20),
+        step(s, dtReal) {
+            const full = s.levelIdx === s.levels.length - 1;
+            const dtSim = dtReal * (full ? 20 : 1);
+            const k = 1 - Math.exp(-2.5 * dtSim);
+            const la = this.levelAmp(s);
+            for (const tn of s.tones) {
+                // Wobbeln erst bei Volllast, zwischen Start- und Endfrequenz hin und her
+                if (full && tn.f2 > tn.f1) {
+                    tn.f *= Math.pow(2, tn.dir * tn.rate / 60 * dtSim);
+                    if (tn.f >= tn.f2) { tn.f = tn.f2; tn.dir = -1; }
+                    if (tn.f <= tn.f1) { tn.f = tn.f1; tn.dir = 1; }
+                }
+                const demand = tn.amp * la;
+                tn.meas = gain(s.plant, tn.f) * tn.drive * la * (1 + 0.015 * gauss());
+                tn.drive *= Math.pow(demand / tn.meas, k);
+                tn.err = dB(tn.meas / demand);
+                if (Math.abs(tn.err) > Math.abs(tn.worst)) tn.worst = tn.err;
+            }
+            return Random.step.call(this, s, dtReal);
+        },
+        extraCheck(s) {
+            let pick = null;
+            for (const tn of s.tones) {
+                if (!pick || Math.abs(tn.worst) > Math.abs(pick.err)) {
+                    pick = { err: tn.worst, warn: s.toneWarn, abort: s.toneAbort, where: t(`Ton ${tn.id} bei ${fmt(tn.f, 3)} Hz`, `tone ${tn.id} at ${fmt(tn.f, 3)} Hz`) };
+                }
+                tn.worst = 0; // Spitzenwert seit der letzten Prüfung zurücksetzen
+            }
+            return pick;
+        },
+        // Töne als Linien im PSD-Bild: gleichwertige Dichte (A²/2)/Δf der Analyselinie
+        extraSeries(s, lines, ymin, ymax) {
+            const tones = s ? s.tones : this.readTones().map((tn) => ({ ...tn, f: tn.f1, meas: 0 }));
+            const df = (f) => f * (Math.pow(lines[lines.length - 1] / lines[0], 1 / (lines.length - 1)) - 1);
+            const color = cssVar('--sine', '#0b7fa0');
+            const out = [];
+            for (const tn of tones) {
+                if (!s && tn.f2 > tn.f1) {
+                    out.push({ points: [[tn.f1, ymin * 1.6], [tn.f2, ymin * 1.6]], color, width: 3 });
+                }
+                const level = s ? this.levelAmp(s) : 1;
+                const dem = Math.min(ymax, (tn.amp * level) ** 2 / 2 / df(tn.f));
+                out.push({ points: [[tn.f, ymin], [tn.f, dem]], color: cssVar('--strong', '#0b1a26'), width: 1, dash: [2, 3] });
+                if (s && tn.meas) out.push({ points: [[tn.f, ymin], [tn.f, Math.min(ymax, tn.meas ** 2 / 2 / df(tn.f))]], color, width: 2.4 });
+            }
+            return out;
+        },
+        readouts(s) {
+            const tones = s ? s.tones : this.readTones();
+            const sineMs = tones.reduce((sum, tn) => sum + (tn.amp * (s ? this.levelAmp(s) : 1)) ** 2 / 2, 0);
+            const randDem = s ? this.grms(s, s.lines.map((f) => this.demandAt(s, f))) : (() => {
+                const profile = resolveProfile(PSD_PRESETS[this.profileKey()].rows);
+                const lines = logspace(profile[0].f, profile[profile.length - 1].f, 400);
+                let area = 0;
+                for (let i = 0; i < lines.length - 1; i++) area += 0.5 * (psdAt(profile, lines[i]) + psdAt(profile, lines[i + 1])) * (lines[i + 1] - lines[i]);
+                return Math.sqrt(area);
+            })();
+            const toneRows = tones.map((tn) => s
+                ? [`${tn.id} ${fmt(tn.f, 3)} Hz`, `${fmt(tn.meas, 3)} / ${fmt(tn.amp * this.levelAmp(s), 3)} g`, Math.abs(tn.err) > s.toneWarn ? 'is-warn' : '']
+                : [`${tn.id} ${tn.f2 > tn.f1 ? `${fmt(tn.f1, 3)}–${fmt(tn.f2, 3)}` : fmt(tn.f1, 3)} Hz`, `${fmt(tn.amp, 3)} g`]);
+            if (!s) {
+                return readouts([
+                    [t('Gesamt-Grms', 'Total Grms'), `${fmt(Math.sqrt(randDem ** 2 + sineMs), 3)} g`],
+                    [t('davon Rauschen', 'of which random'), `${fmt(randDem, 3)} g`],
+                    ...toneRows,
+                ]);
+            }
+            const ctrl = s.avg ? this.grms(s, s.avg) : 0;
+            const sineMeas = s.tones.reduce((sum, tn) => sum + tn.meas ** 2 / 2, 0);
+            readouts([
+                [t('Pegel', 'Level'), `${s.levels[s.levelIdx]} dB`],
+                [t('Gesamt-Grms Ist/Soll', 'Total Grms ctrl/demand'), `${fmt(Math.sqrt(ctrl ** 2 + sineMeas), 3)} / ${fmt(Math.sqrt(randDem ** 2 + sineMs), 3)} g`],
+                [t('Linien > Warngrenze', 'Lines > alarm'), String(s.outWarn ?? 0), (s.outWarn ?? 0) > 0 ? 'is-warn' : ''],
+                ...toneRows,
+                [t('Prüfzeit (Volllast)', 'Test time (full level)'), `${fmtTime(s.fullTime)} / ${fmtTime(s.duration)}`],
+            ]);
+        },
+    });
+
+    const MODES = { sine: Sine, random: Random, shock: Shock, sor: SoR };
 
     /* ---- Ablaufsteuerung ---- */
     const frame = (now) => {

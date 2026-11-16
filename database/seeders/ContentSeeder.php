@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Training;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use App\Support\NormLibrary;
 use Illuminate\Support\Str;
 
 /**
@@ -264,5 +265,7 @@ class ContentSeeder extends Seeder
                 ],
             );
         }
+        // Anforderungen und weitere Normen aus der Normen-Bibliothek
+        NormLibrary::sync(true);
     }
 }

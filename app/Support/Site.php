@@ -50,6 +50,8 @@ class Site
         'consent_title' => 'Cookies und Datenschutz',
         'consent_text' => 'Wir verwenden technisch notwendige Cookies, damit die Website und Ihr Kundenkonto funktionieren. Weitere Dienste wie Statistik oder externe Medien laden wir nur mit Ihrer Einwilligung. Sie können Ihre Auswahl jederzeit über „Cookie-Einstellungen“ im Seitenfuß ändern.',
         'consent_stats_name' => null,
+        'stats_enabled' => true,
+        'stats_require_consent' => false,
         'consent_stats_snippet' => null,
     ];
 
@@ -127,6 +129,16 @@ class Site
     public function contactRequiresAccount(): bool
     {
         return $this->accountsEnabled() && (bool) $this->get('contact_requires_account', false);
+    }
+
+    public function statsEnabled(): bool
+    {
+        return (bool) $this->get('stats_enabled', true);
+    }
+
+    public function statsRequireConsent(): bool
+    {
+        return $this->statsEnabled() && (bool) $this->get('stats_require_consent', false);
     }
 
     public function consentVersion(): int

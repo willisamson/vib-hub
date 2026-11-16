@@ -86,6 +86,30 @@ class NormResource extends Resource
                     RichEditor::make('body')->label('Erläuterung'),
                     Toggle::make('is_published')->label('Veröffentlicht')->default(true),
                 ]),
+            Section::make('Anforderungen')
+                ->description('Wesentliche Festlegungen der Norm als Tabelle, optional in Gruppen (z. B. „Kategorie 2 – Drehgestell“). Die englischen Felder sind optional: leer = deutscher Text, Zahlen mit Dezimalpunkt.')
+                ->columnSpanFull()
+                ->collapsible()
+                ->schema([
+                    Repeater::make('requirements')
+                        ->hiddenLabel()
+                        ->schema([
+                            TextInput::make('group')->label('Gruppe')->placeholder('optional'),
+                            TextInput::make('label')->label('Anforderung')->required(),
+                            Textarea::make('value')->label('Festlegung / Wert')->rows(2)->required(),
+                            TextInput::make('group_en')->label('Group (EN)'),
+                            TextInput::make('label_en')->label('Requirement (EN)'),
+                            Textarea::make('value_en')->label('Value (EN)')->rows(2),
+                        ])
+                        ->columns(3)
+                        ->reorderable()
+                        ->collapsible()
+                        ->collapsed()
+                        ->cloneable()
+                        ->itemLabel(fn (array $state): ?string => trim(($state['group'] ?? '') ? $state['group'].' · '.($state['label'] ?? '') : ($state['label'] ?? '')) ?: null)
+                        ->addActionLabel('Anforderung hinzufügen')
+                        ->defaultItems(0),
+                ]),
             Section::make('English (/en)')
                 ->description('Leere Felder zeigen auf der englischen Website den deutschen Text.')
                 ->columnSpanFull()

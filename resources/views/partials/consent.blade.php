@@ -1,6 +1,7 @@
 @php
-    $hasStats = filled($site->get('consent_stats_snippet'));
-    $statsName = $site->get('consent_stats_name') ?: __('Besucherstatistik');
+    $hasSnippet = filled($site->get('consent_stats_snippet'));
+    $hasStats = $hasSnippet || $site->statsRequireConsent();
+    $statsName = ($hasSnippet ? $site->get('consent_stats_name') : null) ?: __('Unsere anonyme Besucherstatistik');
 @endphp
 {{-- Cookie-Einwilligung: erscheint, bis eine Auswahl gespeichert ist; über „Cookie-Einstellungen“ im Seitenfuß jederzeit änderbar --}}
 <section class="consent" data-consent data-version="{{ $site->consentVersion() }}" role="dialog" aria-modal="false" aria-labelledby="consent-title" aria-describedby="consent-text" hidden>
@@ -40,7 +41,7 @@
     </div>
 </section>
 
-@if ($hasStats)
+@if ($hasSnippet)
     {{-- Wird erst nach Einwilligung in „Statistik“ eingefügt und ausgeführt --}}
     <template data-consent-load="stats">{!! $site->get('consent_stats_snippet') !!}</template>
 @endif

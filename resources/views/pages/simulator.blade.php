@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('title', __('Regler-Simulator'))
-@section('description', __('Schwingregler im Browser: Sinus, Random und Schock mit Sollkurve, Warn- und Abschaltgrenzen – so verhält sich die Regelung bei Resonanzen.'))
+@section('description', __('Schwingregler im Browser: Sinus, Random, Schock und Sinus auf Rauschen mit Sollkurve, Warn- und Abschaltgrenzen – so verhält sich die Regelung bei Resonanzen.'))
 
 @section('content')
     @include('partials.page-head', [
         'title' => __('Regler-Simulator'),
-        'lede' => __('Erleben Sie, wie ein Schwingregler arbeitet: Sollkurve, Warn- und Abschaltgrenzen, Pegelstufen und Regelschleife – für Sinus, Random und Schock. Wählen Sie ein Szenario und starten Sie die Prüfung.'),
+        'lede' => __('Erleben Sie, wie ein Schwingregler arbeitet: Sollkurve, Warn- und Abschaltgrenzen, Pegelstufen und Regelschleife – für Sinus, Random, Schock und Sinus auf Rauschen. Wählen Sie ein Szenario und starten Sie die Prüfung.'),
         'crumbs' => [__('Berechnungen') => lroute('calculators'), __('Regler-Simulator') => null],
     ])
 
@@ -18,6 +18,7 @@
                         <button type="button" role="tab" data-sim-mode="sine" aria-selected="true">{{ __('Sinus') }}</button>
                         <button type="button" role="tab" data-sim-mode="random" aria-selected="false">Random</button>
                         <button type="button" role="tab" data-sim-mode="shock" aria-selected="false">{{ __('Schock') }}</button>
+                        <button type="button" role="tab" data-sim-mode="sor" aria-selected="false">{{ __('Sinus auf Rauschen') }}</button>
                     </div>
                     <div class="sim__status" data-sim-status data-state="idle" role="status" aria-live="polite">
                         <span class="sim__lamp" aria-hidden="true"></span>
@@ -57,6 +58,52 @@
                                 <div class="field"><label>{{ __('Prüfdauer') }}</label><div class="unit-input"><input class="input input--mono" name="duration" value="5" inputmode="decimal"><span>min</span></div></div>
                                 <div class="field"><label>{{ __('Warngrenze') }}</label><div class="unit-input"><input class="input input--mono" name="warn" value="3" inputmode="decimal"><span>±dB</span></div></div>
                                 <div class="field"><label>{{ __('Abschaltgrenze') }}</label><div class="unit-input"><input class="input input--mono" name="abort" value="6" inputmode="decimal"><span>±dB</span></div></div>
+                            </div>
+                        </form>
+
+                        <form data-sim-setup="sor" onsubmit="return false" hidden>
+                            <h2>{{ __('Sinus auf Rauschen') }}</h2>
+                            <div class="form-grid">
+                                <div class="field full"><label>{{ __('Rauschprofil') }}</label>
+                                    <select class="select" name="sor_profile">
+                                        <option value="navmat">NAVMAT P-9492 ({{ dec('6,06') }} Grms)</option>
+                                        <option value="gevs">NASA GEVS ({{ dec('14,1') }} Grms)</option>
+                                        <option value="flat">{{ __('Flach 20–2000 Hz') }} ({{ dec('4,45') }} Grms)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="sim__tones">
+                                <div class="sim__tone sim__tone--head" aria-hidden="true"><span></span><span>{{ __('von Hz') }}</span><span>{{ __('bis Hz') }}</span><span>g pk</span><span>{{ __('Okt/min') }}</span></div>
+                                <div class="sim__tone" data-tone>
+                                    <label class="sim__reso-tag sim__reso-toggle"><input type="checkbox" name="on" checked> T1</label>
+                                    <input class="input input--mono" name="f1" value="120" inputmode="decimal" aria-label="{{ __('Ton :n – Startfrequenz in Hz', ['n' => 1]) }}">
+                                    <input class="input input--mono" name="f2" value="120" inputmode="decimal" aria-label="{{ __('Ton :n – Endfrequenz in Hz', ['n' => 1]) }}">
+                                    <input class="input input--mono" name="amp" value="2" inputmode="decimal" aria-label="{{ __('Ton :n – Amplitude in g', ['n' => 1]) }}">
+                                    <input class="input input--mono" name="rate" value="1" inputmode="decimal" aria-label="{{ __('Ton :n – Wobbelrate in Oktaven pro Minute', ['n' => 1]) }}">
+                                </div>
+                                <div class="sim__tone" data-tone>
+                                    <label class="sim__reso-tag sim__reso-toggle"><input type="checkbox" name="on" checked> T2</label>
+                                    <input class="input input--mono" name="f1" value="400" inputmode="decimal" aria-label="{{ __('Ton :n – Startfrequenz in Hz', ['n' => 2]) }}">
+                                    <input class="input input--mono" name="f2" value="1600" inputmode="decimal" aria-label="{{ __('Ton :n – Endfrequenz in Hz', ['n' => 2]) }}">
+                                    <input class="input input--mono" name="amp" value="{{ dec('1,5') }}" inputmode="decimal" aria-label="{{ __('Ton :n – Amplitude in g', ['n' => 2]) }}">
+                                    <input class="input input--mono" name="rate" value="1" inputmode="decimal" aria-label="{{ __('Ton :n – Wobbelrate in Oktaven pro Minute', ['n' => 2]) }}">
+                                </div>
+                                <div class="sim__tone" data-tone>
+                                    <label class="sim__reso-tag sim__reso-toggle"><input type="checkbox" name="on" > T3</label>
+                                    <input class="input input--mono" name="f1" value="1900" inputmode="decimal" aria-label="{{ __('Ton :n – Startfrequenz in Hz', ['n' => 3]) }}">
+                                    <input class="input input--mono" name="f2" value="1900" inputmode="decimal" aria-label="{{ __('Ton :n – Endfrequenz in Hz', ['n' => 3]) }}">
+                                    <input class="input input--mono" name="amp" value="1" inputmode="decimal" aria-label="{{ __('Ton :n – Amplitude in g', ['n' => 3]) }}">
+                                    <input class="input input--mono" name="rate" value="1" inputmode="decimal" aria-label="{{ __('Ton :n – Wobbelrate in Oktaven pro Minute', ['n' => 3]) }}">
+                                </div>
+                                <p class="sim__hint">{{ __('Gleiche Start- und Endfrequenz = fester Ton. Gewobbelt wird ab Volllast zwischen beiden Frequenzen hin und her.') }}</p>
+                            </div>
+                            <div class="form-grid">
+                                <div class="field"><label>{{ __('Warngrenze Rauschen') }}</label><div class="unit-input"><input class="input input--mono" name="warn" value="3" inputmode="decimal"><span>±dB</span></div></div>
+                                <div class="field"><label>{{ __('Abschaltgrenze Rauschen') }}</label><div class="unit-input"><input class="input input--mono" name="abort" value="6" inputmode="decimal"><span>±dB</span></div></div>
+                                <div class="field"><label>{{ __('Warngrenze Töne') }}</label><div class="unit-input"><input class="input input--mono" name="toneWarn" value="{{ dec('1,5') }}" inputmode="decimal"><span>±dB</span></div></div>
+                                <div class="field"><label>{{ __('Abschaltgrenze Töne') }}</label><div class="unit-input"><input class="input input--mono" name="toneAbort" value="3" inputmode="decimal"><span>±dB</span></div></div>
+                                <div class="field"><label>{{ __('Freiheitsgrade') }}</label><div class="unit-input"><input class="input input--mono" name="dof" value="120" inputmode="numeric"><span>DOF</span></div></div>
+                                <div class="field"><label>{{ __('Prüfdauer') }}</label><div class="unit-input"><input class="input input--mono" name="duration" value="5" inputmode="decimal"><span>min</span></div></div>
                             </div>
                         </form>
 
@@ -115,6 +162,7 @@
                             <li><i class="is-ctrl"></i>{{ __('Regelkurve (Ist)') }}</li>
                             <li><i class="is-warn"></i>{{ __('Warngrenze') }}</li>
                             <li><i class="is-abort"></i>{{ __('Abschaltgrenze') }}</li>
+                            <li data-sim-only="sor" hidden><i class="is-tone"></i>{{ __('Sinustöne') }}</li>
                         </ul>
                         <dl class="sim__readouts" data-sim-readouts></dl>
                         <div class="sim__logwrap">

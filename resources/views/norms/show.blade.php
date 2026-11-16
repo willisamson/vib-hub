@@ -33,17 +33,36 @@
                     </section>
                 @endif
 
+                @php($requirementGroups = $norm->requirementGroups())
+                @if ($requirementGroups)
+                    <section class="panel requirements" id="anforderungen">
+                        <div class="panel__head"><h2 class="hd-3" style="font-size:1.35rem">{{ __('Anforderungen') }}</h2></div>
+                        <div class="panel__body">
+                            @foreach ($requirementGroups as $group)
+                                @if ($group['group'])
+                                    <h3 class="requirements__group">{{ $group['group'] }}</h3>
+                                @endif
+                                <dl class="requirements__list">
+                                    @foreach ($group['rows'] as $row)
+                                        <div><dt>{{ $row['label'] }}</dt><dd>{!! nl2br(e($row['value'])) !!}</dd></div>
+                                    @endforeach
+                                </dl>
+                            @endforeach
+                        </div>
+                    </section>
+                @endif
+
                 @if ($norm->tr('body'))
                     <div class="prose">{!! consent_embeds($norm->tr('body')) !!}</div>
                 @endif
 
-                <p class="muted" style="font-size:.88rem">{{ __('Angaben ohne Gewähr. Maßgeblich ist die gültige Ausgabe der Norm bzw. Ihre Kundenspezifikation.') }}</p>
+                <p class="muted" style="font-size:.88rem">{{ __('Zusammenfassung der wesentlichen Festlegungen in eigenen Worten, ohne Gewähr. Verbindlich sind die gültige Ausgabe der Norm und Ihre Prüfspezifikation; viele Werte sind dort als Auswahl oder Vorzugswerte angegeben.') }}</p>
             </article>
 
             <aside>
                 <div class="panel">
                     <div class="panel__body stack-m">
-                        <h2 class="hd-3" style="font-size:1.35rem">Prüfung nach {{ $norm->code }}</h2>
+                        <h2 class="hd-3" style="font-size:1.35rem">{{ __('Prüfung nach :code', ['code' => $norm->code]) }}</h2>
                         <p class="muted">{{ __('Wir prüfen nach dieser Norm oder leiten mit Ihnen die passende Prüfschärfe ab.') }}</p>
                         <a class="btn btn--primary" style="width:100%" href="{{ lroute('contact', ['thema' => 'pruefung', 'bezug' => $norm->code]) }}">{{ __('Prüfung anfragen') }}</a>
                     </div>

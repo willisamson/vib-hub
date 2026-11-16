@@ -55,6 +55,7 @@ class Settings extends Page
         'accounts_enabled', 'contact_requires_account',
         'consent_title', 'consent_text', 'consent_title_en', 'consent_text_en',
         'consent_stats_name', 'consent_stats_snippet', 'consent_version',
+        'stats_enabled', 'stats_require_consent',
     ];
 
     public function mount(): void
@@ -218,7 +219,15 @@ class Settings extends Page
                                             ->numeric()->minValue(1)->default(1)
                                             ->helperText('Erhöhen, wenn neue Dienste dazukommen – dann werden alle Besucher erneut gefragt.'),
                                     ]),
-                                Section::make('Statistik (optional)')
+                                Section::make('Eigene Besucherstatistik')
+                                    ->description('Zählt Seitenaufrufe auf Ihrem Server, ohne Cookies und ohne IP-Adressen zu speichern. Auswertung unter Website → Besucher. Ihre eigenen Besuche (angemeldet im Admin) werden nicht gezählt.')
+                                    ->schema([
+                                        Toggle::make('stats_enabled')->label('Besucher zählen')->default(true),
+                                        Toggle::make('stats_require_consent')
+                                            ->label('Nur mit Einwilligung zählen')
+                                            ->helperText('Aus: Zählung ohne Cookies und ohne Personenbezug, ohne Nachfrage. Ein: Nur Besucher, die im Cookie-Hinweis „Statistik“ zustimmen, werden gezählt – die Zahlen fallen dann deutlich niedriger aus.'),
+                                    ]),
+                                Section::make('Externer Statistikdienst (optional)')
                                     ->description('Code eines Statistikdienstes, z. B. Matomo. Er wird erst geladen, nachdem ein Besucher „Statistik“ zugestimmt hat. Ohne Code erscheint die Kategorie nicht.')
                                     ->schema([
                                         TextInput::make('consent_stats_name')->label('Name des Dienstes')->placeholder('z. B. Matomo'),

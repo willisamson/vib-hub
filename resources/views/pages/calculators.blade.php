@@ -26,7 +26,7 @@
                     <span class="sim__lamp" aria-hidden="true"></span>
                     <div>
                         <strong>{{ __('Neu: Regler-Simulator') }}</strong>
-                        <span>{{ __('Sinus, Random und Schock mit Sollkurve, Warn- und Abschaltgrenzen – erleben Sie die Regelung live.') }}</span>
+                        <span>{{ __('Sinus, Random, Schock und Sinus auf Rauschen mit Sollkurve, Warn- und Abschaltgrenzen – erleben Sie die Regelung live.') }}</span>
                     </div>
                     <span class="btn btn--small">{{ __('Simulator öffnen') }}</span>
                 </a>

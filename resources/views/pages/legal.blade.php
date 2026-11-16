@@ -43,6 +43,12 @@
                             </tbody>
                         </table>
                         <p class="muted" style="margin-top:1rem; font-size:.92rem">{{ __('Schriften und alle Dateien dieser Website werden von unserem eigenen Server geladen, nicht von Drittanbietern.') }}</p>
+                        @if ($site->statsEnabled())
+                            <h3 style="margin-top:1.4rem; font-size:1.05rem">{{ __('Besucherstatistik') }}</h3>
+                            <p style="margin-top:.4rem; font-size:.95rem">{{ $site->statsRequireConsent()
+                                ? __('Mit Ihrer Einwilligung in „Statistik“ zählen wir Seitenaufrufe auf unserem eigenen Server, ohne Cookies. Gespeichert werden die aufgerufene Seite, Datum, Sprache, Gerätetyp (Computer, Tablet, Smartphone) und die Domain der verweisenden Website. Ihre IP-Adresse speichern wir nicht; um Besucher eines Tages nur einmal zu zählen, bilden wir einen täglich wechselnden, nicht rückrechenbaren Prüfwert. Die Daten werden nach spätestens 400 Tagen gelöscht und nicht an Dritte weitergegeben.')
+                                : __('Wir zählen Seitenaufrufe auf unserem eigenen Server, ohne Cookies und ohne Daten an Dritte weiterzugeben. Gespeichert werden die aufgerufene Seite, Datum, Sprache, Gerätetyp (Computer, Tablet, Smartphone) und die Domain der verweisenden Website. Ihre IP-Adresse speichern wir nicht; um Besucher eines Tages nur einmal zu zählen, bilden wir einen täglich wechselnden, nicht rückrechenbaren Prüfwert. Rückschlüsse auf Ihre Person sind damit nicht möglich. Die Daten werden nach spätestens 400 Tagen gelöscht. Ist in Ihrem Browser „Do Not Track“ oder „Global Privacy Control“ aktiviert, zählen wir Sie nicht.') }}</p>
+                        @endif
                     </div>
                 </section>
             @endunless
