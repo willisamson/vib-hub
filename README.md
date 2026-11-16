@@ -49,7 +49,7 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Kundenkonto (`/konto`) | `app/Http/Controllers/Account/`, Views `resources/views/account/`, Guard `customer` in `config/auth.php` · Admin → **Kunden → Kunden** · ein/aus: Website & Logo → Kundenkonto |
 | Cookie-Hinweis | `resources/views/partials/consent.blade.php`, `resources/js/modules/consent.js` · Texte/Statistik-Code: Website & Logo → Cookies |
 | Besucherstatistik | Admin → **Website → Besucher** (`app/Filament/Pages/Visitors.php`, Zählung: `app/Http/Middleware/TrackPageView.php`) · ein/aus: Website & Logo → Cookies |
-| Admin-Anmeldung | `app/Filament/Pages/Auth/Login.php`, `resources/views/filament/auth/login-brand.blade.php` (Logo aus Website & Logo) |
+| Admin-Anmeldung | `app/Filament/Pages/Auth/Login.php`, Stil: `resources/views/filament/auth/login-brand.blade.php` (Logo aus Website & Logo) |
 | Normen-Anforderungen | Admin → **Inhalte → Normen** → Abschnitt „Anforderungen“ · Bibliothek: `database/data/norm-library.php`, einspielen mit `php artisan vibhub:normen` (`--force` überschreibt Admin-Änderungen) |
 | Einblenden beim Scrollen | `resources/js/modules/reveal.js` (respektiert „Bewegung reduzieren“) |
 
