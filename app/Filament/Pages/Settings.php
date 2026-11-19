@@ -56,6 +56,7 @@ class Settings extends Page
         'consent_title', 'consent_text', 'consent_title_en', 'consent_text_en',
         'consent_stats_name', 'consent_stats_snippet', 'consent_version',
         'stats_enabled', 'stats_require_consent',
+        'construction_enabled', 'construction_title', 'construction_text', 'construction_title_en', 'construction_text_en',
     ];
 
     public function mount(): void
@@ -74,6 +75,20 @@ class Settings extends Page
                     ->columnSpanFull()
                     ->persistTabInQueryString()
                     ->tabs([
+                        Tab::make('Baustelle')
+                            ->icon(Heroicon::OutlinedWrenchScrewdriver)
+                            ->schema([
+                                Section::make('Baustellen-Modus')
+                                    ->description('Solange eingeschaltet, sehen Besucher nur eine Baustellenseite mit Logo, Text und Ihrer E-Mail-Adresse. Impressum und Datenschutz bleiben erreichbar. Als angemeldeter Admin sehen Sie weiterhin die komplette Website und können in Ruhe weiterarbeiten.')
+                                    ->columns(2)
+                                    ->schema([
+                                        Toggle::make('construction_enabled')->label('Baustellenseite für Besucher anzeigen')->default(false)->columnSpanFull(),
+                                        TextInput::make('construction_title')->label('Überschrift')->placeholder('Hier entsteht etwas Neues'),
+                                        TextInput::make('construction_title_en')->label('Überschrift (Englisch)')->placeholder('Something new is on its way'),
+                                        Textarea::make('construction_text')->label('Text')->rows(3),
+                                        Textarea::make('construction_text_en')->label('Text (Englisch)')->rows(3),
+                                    ]),
+                            ]),
                         Tab::make('Marke & Logo')
                             ->icon(Heroicon::OutlinedSparkles)
                             ->schema([

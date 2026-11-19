@@ -54,6 +54,9 @@ class Site
         'consent_stats_name' => null,
         'stats_enabled' => true,
         'stats_require_consent' => false,
+        'construction_enabled' => false,
+        'construction_title' => 'Hier entsteht etwas Neues',
+        'construction_text' => 'Wir bauen vib-hub.com gerade um: Beratung, Prüfstandsplanung und Resonanzbeseitigung für die Schwingungstechnik. Schon jetzt erreichen Sie uns jederzeit per E-Mail.',
         'consent_stats_snippet' => null,
     ];
 
@@ -61,9 +64,12 @@ class Site
     public const TRANSLATABLE = [
         'tagline', 'meta_description', 'hero_kicker', 'hero_title', 'hero_text',
         'footer_text', 'app_text', 'imprint', 'privacy', 'consent_title', 'consent_text',
+        'construction_title', 'construction_text',
     ];
 
     public const DEFAULTS_EN = [
+        'construction_title' => 'Something new is on its way',
+        'construction_text' => 'We are rebuilding vib-hub.com: consulting, test system planning and resonance elimination for vibration engineering. You can already reach us any time by e-mail.',
         'tagline' => 'Test system planning, consulting and resonance elimination',
         'meta_description' => 'vib-hub – planning and setting up resonance-free shaker test systems, consulting on sine, random and shock testing to IEC 60068, resonance elimination, calculations and training.',
         'hero_kicker' => 'Consulting and engineering for vibration technology',
@@ -152,6 +158,12 @@ class Site
     public function partnerName(): string
     {
         return (string) ($this->get('partner_name') ?: 'RMS Dynamic Test Systems');
+    }
+
+    /** Baustellen-Modus: Besucher sehen nur die Baustellenseite, angemeldete Admins die ganze Website. */
+    public function constructionMode(): bool
+    {
+        return (bool) $this->get('construction_enabled', false);
     }
 
     public function name(): string

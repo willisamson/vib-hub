@@ -53,6 +53,7 @@ php artisan db:seed --class=ContentSeeder --force   # einmalig: Startinhalte
 | Zwei-Faktor-Anmeldung | Pflicht für alle Admins: Code per E-Mail oder kostenlose Authenticator-App (mit Wiederherstellungscodes), verwalten unter Profil (oben rechts) · Notfall: `php artisan vibhub:2fa-reset admin@…` |
 | Shaker-Auslegung | `/shaker-auslegung` (`resources/js/modules/planner.js`) · Modelle: Admin → **Inhalte → Shaker-Modelle** · Weiterleitung an Partner: Website & Logo → Kontakt |
 | Besucherstatistik: Länder | Land aus der IP (lokal nachgeschlagen, IP wird nicht gespeichert), Datenbank DB-IP Lite: `php artisan vibhub:geoip` (lädt automatisch nachts, alle 30 Tage neu) |
+| Baustellen-Modus | Admin → **Website & Logo → Baustelle**: Besucher sehen nur eine Baustellenseite (`resources/views/construction.blade.php`), Admins die ganze Website; Impressum/Datenschutz bleiben erreichbar |
 | Datensicherung (Server) | `server/backup-vibhub.sh` – einmal `bash server/backup-vibhub.sh install`, dann täglich 3:17 Uhr nach `/var/backups/vibhub` (14 Tage + 8 Wochen) |
 | Normen-Anforderungen | Admin → **Inhalte → Normen** → Abschnitt „Anforderungen“ · Bibliothek: `database/data/norm-library.php`, einspielen mit `php artisan vibhub:normen` (`--force` überschreibt Admin-Änderungen) |
 | Einblenden beim Scrollen | `resources/js/modules/reveal.js` (respektiert „Bewegung reduzieren“) |

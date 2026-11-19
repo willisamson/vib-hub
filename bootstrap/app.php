@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ConstructionMode;
 use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // Anonyme Besucherstatistik (Admin → Website → Besucher)
-        $middleware->web(append: [TrackPageView::class]);
+        $middleware->web(append: [ConstructionMode::class, TrackPageView::class]);
 
         // Die Cookie-Auswahl setzt der Browser selbst – sie wird nicht verschlüsselt
         $middleware->encryptCookies(except: ['vibhub_consent']);

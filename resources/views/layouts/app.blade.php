@@ -30,6 +30,12 @@
     @stack('head')
 </head>
 <body>
+    @if ($site->constructionMode() && auth('web')->check())
+        <div style="position:fixed; left:0; right:0; bottom:0; z-index:70; background:#b7791f; color:#fff; font-size:.85rem; text-align:center; padding:.45rem 1rem">
+            Baustellen-Modus aktiv – Besucher sehen nur die Baustellenseite. Sie sind als Admin angemeldet und sehen die ganze Website.
+            <a href="{{ url('/admin/einstellungen') }}" style="color:#fff; text-decoration:underline">Ändern</a>
+        </div>
+    @endif
     <a class="skip-link" href="#inhalt">{{ __('Zum Inhalt springen') }}</a>
 
     @include('partials.header')

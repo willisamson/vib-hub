@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Settings;
 use App\Notifications\TwoFactorCode;
 use App\Support\Site;
 use Filament\Http\Middleware\Authenticate;
@@ -56,6 +57,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Archivo')
             ->sidebarCollapsibleOnDesktop()
+            ->renderHook(PanelsRenderHook::BODY_START, fn () => app(Site::class)->constructionMode()
+                ? new HtmlString('<div style="background:#b7791f;color:#fff;font-size:13px;text-align:center;padding:6px 12px">Baustellen-Modus ist aktiv – Besucher sehen nur die Baustellenseite. <a href="'.e(Settings::getUrl()).'" style="text-decoration:underline;color:#fff">Ändern</a></div>')
+                : '')
             ->renderHook(PanelsRenderHook::SIMPLE_LAYOUT_START, fn () => view('filament.auth.login-brand'), scopes: Login::class)
             ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn () => new HtmlString('<a class="vh-back" href="'.e(url('/')).'">← Zurück zur Website</a>'))
             ->navigationGroups([
